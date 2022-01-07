@@ -28,13 +28,13 @@ RUN go mod download -x
 # ----- COPY + RUN -----
 
 # Copy the source from the current directory to the container
-COPY . ./
+COPY api/ ./
 
 # Install 'air' live-reload go module
 RUN go get -u github.com/cosmtrek/air
 
 # Use the excutable
-ENTRYPOINT ["/go/bin/air", "-c", "./.config/air.toml"]
+ENTRYPOINT ["/go/bin/air", "-c", ".config/air.toml"]
 
 #----------------------------------------------------------------
 # PRODUCTION 
