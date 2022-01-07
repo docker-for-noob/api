@@ -21,3 +21,6 @@ go.work
 
 .idea
 .DS_Store
+
+# Build directory for dev
+tmp/
