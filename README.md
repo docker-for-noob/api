@@ -1,4 +1,10 @@
 # api
+
+**Installation des dépendances**
+```
+go mod vendor
+```
+
 # Architecture
 ## cmd
 Le dossier contient les points d'entrées de l'application, par exemple le router
