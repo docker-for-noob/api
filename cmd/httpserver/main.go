@@ -16,6 +16,7 @@ import (
 	"net/http"
 )
 
+
 func main() {
 	BcryptRepositoryInstanciated := repositories.NewBcryptRepository()
 	userRepositoryInstanciated := repositories.NewUserRepository()
@@ -48,6 +49,14 @@ func main() {
 	userHandler := userHandlers.New(userServiceInstanciated)
 	authentificationHandler := authentificationHandlers.New(authentificationwithJWTServiceInstanciated)
 
+	varDockerHubRepository := dockerHubRepository.NewMemKVS()
+	varDockerHubService := dockerHubService.New(varDockerHubRepository)
+	varDockerHubHandler := dockerHubHandler.NewHTTPHandler(varDockerHubService)
+
+	varDockerHubRepository := dockerHubRepository.NewMemKVS()
+	varDockerHubService := dockerHubService.New(varDockerHubRepository)
+	varDockerHubHandler := dockerHubHandler.NewHTTPHandler(varDockerHubService)
+
 	router := chi.NewRouter()
 
 	router.Group(func(publicRouter chi.Router) {
@@ -56,6 +65,8 @@ func main() {
 		publicRouter.Patch("/user/update/{id}", userHandler.Patch)
 		publicRouter.Delete("/user/{id}", userHandler.Delete)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
+		publicRouter.Get("/dockerHub/images", varDockerHubHandler.GetAll)
+		publicRouter.Get("/dockerHub/images/{image}", varDockerHubHandler.Get)
 	})
 
 	router.Group(func(privateRouter chi.Router) {

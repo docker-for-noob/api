@@ -1,11 +1,16 @@
 package ports
 
-import "github.com/docker-generator/api/internal/core/domain"
+import (
+	domain "github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
+	"net/http"
+)
 
 type DockerHubRepository interface {
-	Read(id string) (domain.DockerHub, error)
+	ReadAll() (*http.Response, error)
+	Read(image string, tag string) (domain.DockerHubResult, error)
 }
 
 type DockerHubService interface {
-	Get(id string) (domain.DockerHub, error)
+	GetAll() (*http.Response, error)
+	Get(image string, tag string) (domain.DockerHubResult, error)
 }

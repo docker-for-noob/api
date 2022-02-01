@@ -1,10 +1,10 @@
 package dockerHubService
 
 import (
-	"github.com/docker-generator/api/internal/core/domain"
+	domain "github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
 	"github.com/docker-generator/api/internal/core/ports"
-	apperrors "github.com/docker-generator/api/pkg/apperror"
-	"github.com/matiasvarela/errors"
+	"log"
+	"net/http"
 )
 
 type dockerHubService struct {
@@ -17,18 +17,24 @@ func New(dockerHubRepository ports.DockerHubRepository) *dockerHubService {
 	}
 }
 
-func (srv *dockerHubService) Get(id string) (domain.DockerHub, error) {
+func (srv *dockerHubService) GetAll() (*http.Response, error) {
 
-	dockerHub, err := srv.dockerHubRepository.Read(id)
+	resp, err := srv.dockerHubRepository.ReadAll()
 
 	if err != nil {
-		if errors.Is(err, apperrors.NotFound) {
-			return domain.DockerHub{}, errors.New(apperrors.NotFound, err, "Image not found in docker hub", "")
-		}
-
-		return domain.DockerHub{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
-
+		log.Fatalln(err)
 	}
 
-	return dockerHub, nil
+	return resp, nil
+}
+
+func (srv *dockerHubService) Get(image string, tag string) (domain.DockerHubResult, error) {
+
+	resp, err := srv.dockerHubRepository.Read(image, tag)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return resp, nil
 }
