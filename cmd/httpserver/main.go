@@ -18,6 +18,10 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Post("/docker-compose/save", dockerComposeHandler.SaveDockerCompose)
+	r.Put("/docker-compose/update", dockerComposeHandler.UpdateDockerCompose)
+	r.Delete("/docker-compose/delete/{id}", dockerComposeHandler.DeleteDockerCompose)
+	r.Get("/docker-compose/{id}", dockerComposeHandler.FindOneDockerCompose)
+	r.Get("/docker-compose/get-all/{fromItem}", dockerComposeHandler.FindAllDockerCompose)
 	err := http.ListenAndServe(":8080", r)
 	fmt.Println(err)
 }
