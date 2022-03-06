@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/docker-generator/api/internal/core/services/authentification/authentificationWithJWTService"
 	"github.com/docker-generator/api/internal/core/services/dockerComposeService"
@@ -13,6 +14,7 @@ import (
 	"github.com/docker-generator/api/pkg/JwtHelpers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/go-redis/redis/v8"
 	"net/http"
 )
 
