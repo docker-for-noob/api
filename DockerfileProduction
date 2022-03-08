@@ -1,0 +1,24 @@
+#----------------------------------------------------------------
+# PRODUCTION 
+#----------------------------------------------------------------
+
+#
+# Builder
+#
+
+FROM golang:1.17 AS builder
+
+WORKDIR /go/src/api
+
+# Download necessary Go modules
+
+ENV GO111MODULE=on
+
+COPY go.mod .
+RUN go mod download
+
+# Copy over the source files
+COPY . .
+
+
+CMD [ "go", "run", "github.com/docker-generator/api/cmd/httpserver"]
