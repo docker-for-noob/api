@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/docker-generator/api/internal/core/services/dockerComposeService"
+	"github.com/docker-generator/api/internal/core/services/versionService"
 	"github.com/docker-generator/api/internal/handlers"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/go-chi/chi/v5"
@@ -12,8 +13,11 @@ import (
 
 func main() {
 	dockerComposeRepositoryInstanciated := repositories.NewDockerComposeFirestore()
-	dockerComposeServiceInstanciated := dockerComposeService.New(dockerComposeRepositoryInstanciated)
+	versionFirestoreRepositoryIntanciated := repositories.NewVersionFirestore()
+	versionServiceInstanciated := versionService.New(dockerComposeRepositoryInstanciated, versionFirestoreRepositoryIntanciated)
+	dockerComposeServiceInstanciated := dockerComposeService.New(dockerComposeRepositoryInstanciated, versionServiceInstanciated)
 	dockerComposeHandler := handlers.NewDockerComposeHTTPHandler(dockerComposeServiceInstanciated)
+	versionHandler := handlers.NewVersionHTTPHandler(versionServiceInstanciated)
 
 
 	r := chi.NewRouter()
@@ -22,6 +26,8 @@ func main() {
 	r.Delete("/docker-compose/delete/{id}", dockerComposeHandler.DeleteDockerCompose)
 	r.Get("/docker-compose/{id}", dockerComposeHandler.FindOneDockerCompose)
 	r.Get("/docker-compose/get-all/{fromItem}", dockerComposeHandler.FindAllDockerCompose)
+	r.Get("/docker-compose/{id}/version/{versionId}", versionHandler.FindOneVersion)
+	r.Get("/docker-compose/{id}/version", versionHandler.FindAllVersion)
 	err := http.ListenAndServe(":8080", r)
 	fmt.Println(err)
 }

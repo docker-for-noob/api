@@ -35,18 +35,18 @@ func (m *MockDockerComposeRepository) EXPECT() *MockDockerComposeRepositoryMockR
 }
 
 // Create mocks base method.
-func (m *MockDockerComposeRepository) Create(DockerComposeDatas []byte) (domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) Create(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", DockerComposeDatas)
+	ret := m.ctrl.Call(m, "Create", dockerCompose)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockDockerComposeRepositoryMockRecorder) Create(DockerComposeDatas interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Create(dockerCompose interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), DockerComposeDatas)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), dockerCompose)
 }
 
 // Delete mocks base method.
@@ -77,6 +77,21 @@ func (m *MockDockerComposeRepository) Read(id string) (domain.DockerCompose, err
 func (mr *MockDockerComposeRepositoryMockRecorder) Read(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockDockerComposeRepository)(nil).Read), id)
+}
+
+// ReadAll mocks base method.
+func (m *MockDockerComposeRepository) ReadAll(firstItemRank int) ([]domain.DockerCompose, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadAll", firstItemRank)
+	ret0, _ := ret[0].([]domain.DockerCompose)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadAll indicates an expected call of ReadAll.
+func (mr *MockDockerComposeRepositoryMockRecorder) ReadAll(firstItemRank interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockDockerComposeRepository)(nil).ReadAll), firstItemRank)
 }
 
 // Update mocks base method.
@@ -145,6 +160,22 @@ func (m *MockDockerComposeService) Get(id string) (domain.DockerCompose, error) 
 func (mr *MockDockerComposeServiceMockRecorder) Get(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockDockerComposeService)(nil).Get), id)
+}
+
+// GetAll mocks base method.
+func (m *MockDockerComposeService) GetAll(firstItemRank int) (int, []domain.DockerCompose, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAll", firstItemRank)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].([]domain.DockerCompose)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetAll indicates an expected call of GetAll.
+func (mr *MockDockerComposeServiceMockRecorder) GetAll(firstItemRank interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockDockerComposeService)(nil).GetAll), firstItemRank)
 }
 
 // Patch mocks base method.

@@ -17,8 +17,5 @@ vendor/
 # Go workspace file
 go.work
 
-# Build directory for dev
-tmp/
-
 .idea
 .DS_Store

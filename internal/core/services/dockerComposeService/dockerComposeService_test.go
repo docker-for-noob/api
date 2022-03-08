@@ -13,21 +13,98 @@ import (
 
 type mockers struct {
 	dockerComposeRepository *mockports.MockDockerComposeRepository
+	versionService *mockports.MockVersionService
+}
+
+func TestDockerComposeService_GetAll(t *testing.T) {
+
+	//Mocks//
+	firstItem := 0
+	id := "1001-1001-1001-1001"
+	sampleWantedDockerCompose := []domain.DockerCompose{
+		{Id: id, DockerComposeDatas: "{id: '1001-1001-1001-1001', value: 'comme ça'"},
+		{Id: id, DockerComposeDatas: "{id: '2002-2002-2002-2002', value: 'comme ça'"},
+	}
+
+	sampleResultDockerCompose := []domain.DockerCompose{
+		{Id: id, DockerComposeDatas: "{id: '1001-1001-1001-1001', value: 'comme ça'"},
+		{Id: id, DockerComposeDatas: "{id: '2002-2002-2002-2002', value: 'comme ça'"},
+	}
+	//Tests//
+	type args struct {
+		firstItemRank int
+	}
+
+	type want struct {
+		lastItemRank int
+		result       []domain.DockerCompose
+		err          error
+	}
+
+	tests := []struct {
+		name  string
+		args  args
+		want  want
+		mocks func(m mockers)
+	}{
+		{
+			name: "Should get all dockerCompose successfully",
+			args: args{firstItemRank: 0},
+			want: want{
+				result: sampleWantedDockerCompose,
+				lastItemRank: 25,
+			},
+			mocks: func(m mockers) {
+				m.dockerComposeRepository.EXPECT().ReadAll(firstItem).Return(sampleResultDockerCompose, nil)
+			},
+		},
+		{
+			name: "Should return an internal error",
+			args: args{firstItemRank: 0},
+			want: want{
+				result: []domain.DockerCompose{},
+				lastItemRank: 0,
+				err: errors.New(apperrors.Internal, nil, "An internal error occurred", ""),
+			},
+			mocks: func(m mockers) {
+				m.dockerComposeRepository.EXPECT().ReadAll(firstItem).Return([]domain.DockerCompose{}, errors.New(apperrors.NotFound, nil, "", ""))
+			},
+		},
+	}
+
+	// Test Runner //
+	for _, tt := range tests {
+		tt := tt
+
+		m := mockers{
+			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
+			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+		}
+
+		tt.mocks(m)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+
+		lastItemRank, result, err := service.GetAll(tt.args.firstItemRank)
+
+		// Verify
+		if tt.want.err != nil {
+			assert.Equal(t, errors.Code(tt.want.err), errors.Code(err))
+			assert.Equal(t, tt.want.err.Error(), err.Error())
+		}
+
+		assert.Equal(t, tt.want.result, result)
+		assert.Equal(t, tt.want.lastItemRank, lastItemRank)
+	}
 }
 
 func TestDockerComposeService_Get(t *testing.T) {
 
 	//Mocks//
-
-
 	id := "1001-1001-1001-1001"
-
-	sampleWantedDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{id: '1001-1001-1001-1001', value: 'comme ça'") }
-	sampleResultDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{id: '1001-1001-1001-1001', value: 'comme ça'") }
-
+	sampleWantedDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{id: '1001-1001-1001-1001', value: 'comme ça'"}
+	sampleResultDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{id: '1001-1001-1001-1001', value: 'comme ça'"}
 
 	//Tests//
-
 	type args struct {
 		id string
 	}
@@ -54,32 +131,32 @@ func TestDockerComposeService_Get(t *testing.T) {
 		{
 			name: "Should return a NotFound error",
 			args: args{id: "1001-1001-1001-1001"},
-			want: want{err: errors.New(apperrors.NotFound,nil, "DockerCompose not found in database", "")},
+			want: want{err: errors.New(apperrors.NotFound, nil, "DockerCompose not found in database", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.NotFound,nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 		{
 			name: "Should return a Internal error",
 			args: args{id: "1001-1001-1001-1001"},
-			want: want{err: errors.New(apperrors.Internal,nil, "An internal error occurred", "")},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.Internal,nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}
 
 	// Test Runner //
-
 	for _, tt := range tests {
 		tt := tt
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
+			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
 
 		result, err := service.Get(tt.args.id)
 
@@ -99,79 +176,9 @@ func TestDockerComposeService_Post(t *testing.T) {
 
 	id := "1001-1001-1001-1001"
 
-	sampleWantedDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{value: 'comme ça'") }
-	sampleResultDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{value: 'comme ça'") }
-
-
-	//Tests//
-
-	type args struct {
-		datas []byte
-	}
-
-	type want struct {
-		result domain.DockerCompose
-		err    error
-	}
-
-	tests := []struct {
-		name  string
-		args  args
-		want  want
-		mocks func(m mockers)
-	}{
-		{
-			name: "Should Create dockerCompose successfully",
-			args: args{datas: []byte("{value: 'comme ça'}")},
-			want: want{result: sampleWantedDockerCompose},
-			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Create([]byte("{value: 'comme ça'}")).Return(sampleResultDockerCompose, nil)
-			},
-		},
-		{
-			name: "Should return an Internal error",
-			args: args{datas: []byte("{value: 'comme ça'}")},
-			want: want{err: errors.New(apperrors.Internal,nil, "An internal error occurred", "")},
-			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Create([]byte("{value: 'comme ça'}")).Return(domain.DockerCompose{}, errors.New(apperrors.Internal,nil, "", ""))
-			},
-		},
-	}
-
-	// Test Runner //
-
-	for _, tt := range tests {
-		tt := tt
-
-		m := mockers{
-			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
-		}
-
-		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository)
-		result, err := service.Post(tt.args.datas)
-
-		// Verify
-		if tt.want.err != nil {
-			assert.Equal(t, errors.Code(tt.want.err), errors.Code(err))
-			assert.Equal(t, tt.want.err.Error(), err.Error())
-		}
-
-		assert.Equal(t, tt.want.result, result)
-
-	}
-}
-
-func TestDockerComposeService_Patch(t *testing.T) {
-
-	//Mocks//
-
-	id := "1001-1001-1001-1001"
-
-	sampleWantedDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{value: 'comme ça'") }
-	sampleResultDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{value: 'comme ça'") }
-	sampleInputDockerCompose := domain.DockerCompose{Id: id,DockerComposeDatas: []byte("{value: 'comme ça'") }
-
+	sampleWantedDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+	sampleResultDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+	sampleInputDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
 
 	//Tests//
 
@@ -195,23 +202,15 @@ func TestDockerComposeService_Patch(t *testing.T) {
 			args: args{dockerCompose: sampleInputDockerCompose},
 			want: want{result: sampleWantedDockerCompose},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(sampleResultDockerCompose, nil)
+				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose).Return(sampleResultDockerCompose, nil)
 			},
 		},
 		{
 			name: "Should return an Internal error",
 			args: args{dockerCompose: sampleInputDockerCompose},
-			want: want{err: errors.New(apperrors.Internal,nil, "An internal error occurred", "")},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.Internal,nil, "", ""))
-			},
-		},
-		{
-			name: "Should return a NotFound error",
-			args: args{dockerCompose: sampleInputDockerCompose},
-			want: want{err: errors.New(apperrors.NotFound,nil, "DockerCompose not found in database", "")},
-			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.NotFound,nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}
@@ -223,10 +222,108 @@ func TestDockerComposeService_Patch(t *testing.T) {
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
+			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		result, err := service.Post(tt.args.dockerCompose)
+
+		// Verify
+		if tt.want.err != nil {
+			assert.Equal(t, errors.Code(tt.want.err), errors.Code(err))
+			assert.Equal(t, tt.want.err.Error(), err.Error())
+		}
+
+		assert.Equal(t, tt.want.result, result)
+
+	}
+}
+
+func TestDockerComposeService_Patch(t *testing.T) {
+
+	//Mocks//
+
+	id := "1001-1001-1001-1001"
+
+	sampleWantedDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+	sampleResultDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+	sampleInputDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+
+	//Tests//
+
+	type args struct {
+		dockerCompose domain.DockerCompose
+	}
+
+	type want struct {
+		result domain.DockerCompose
+		err    error
+	}
+
+	tests := []struct {
+		name  string
+		args  args
+		want  want
+		mocks func(m mockers)
+	}{
+		{
+			name: "Should Update dockerCompose successfully",
+			args: args{dockerCompose: sampleInputDockerCompose},
+			want: want{result: sampleWantedDockerCompose},
+			mocks: func(m mockers) {
+				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(sampleResultDockerCompose, nil)
+				m.versionService.EXPECT().Add(sampleInputDockerCompose.Id).Return(nil)
+			},
+		},
+		{
+			name: "Should return an Internal error",
+			args: args{dockerCompose: sampleInputDockerCompose},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
+			mocks: func(m mockers) {
+				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
+				m.versionService.EXPECT().Add(sampleInputDockerCompose.Id).Return(nil)
+			},
+		},
+		{
+			name: "Should return a NotFound error",
+			args: args{dockerCompose: sampleInputDockerCompose},
+			want: want{err: errors.New(apperrors.NotFound, nil, "DockerCompose not found in database", "")},
+			mocks: func(m mockers) {
+				m.dockerComposeRepository.EXPECT().Update(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.NotFound,nil, "", ""))
+				m.versionService.EXPECT().Add(sampleInputDockerCompose.Id).Return(nil)
+			},
+		},
+		{
+			name: "Should return a NotFound error because Id not found in versionService",
+			args: args{dockerCompose: sampleInputDockerCompose},
+			want: want{err: errors.New(apperrors.NotFound, nil, "version Service can not found dockerCompose", "")},
+			mocks: func(m mockers) {
+				m.versionService.EXPECT().Add(sampleInputDockerCompose.Id).Return(errors.New(apperrors.NotFound, nil, "", ""))
+			},
+		},
+		{
+			name: "Should return a Internal error from versionService",
+			args: args{dockerCompose: sampleInputDockerCompose},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred in versionService", "")},
+			mocks: func(m mockers) {
+				m.versionService.EXPECT().Add(sampleInputDockerCompose.Id).Return(errors.New(apperrors.Internal, nil, "", ""))
+			},
+		},
+	}
+
+	// Test Runner //
+
+	for _, tt := range tests {
+		tt := tt
+
+		m := mockers{
+			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
+			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+		}
+
+		tt.mocks(m)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
 		result, err := service.Patch(tt.args.dockerCompose)
 
 		// Verify
@@ -272,17 +369,17 @@ func TestDockerComposeService_Delete(t *testing.T) {
 		{
 			name: "Should return an Internal error",
 			args: args{id: "1001-1001-1001-1001"},
-			want: want{err: errors.New(apperrors.Internal,nil, "An internal error occurred", "")},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Delete("1001-1001-1001-1001").Return(false, errors.New(apperrors.Internal,nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Delete("1001-1001-1001-1001").Return(false, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 		{
 			name: "Should return a NotFound error",
 			args: args{id: "1001-1001-1001-1001"},
-			want: want{err: errors.New(apperrors.NotFound,nil, "DockerCompose not found in database", "")},
+			want: want{err: errors.New(apperrors.NotFound, nil, "DockerCompose not found in database", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Delete("1001-1001-1001-1001").Return(false, errors.New(apperrors.NotFound,nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Delete("1001-1001-1001-1001").Return(false, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 	}
@@ -294,10 +391,11 @@ func TestDockerComposeService_Delete(t *testing.T) {
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
+			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
 		result, err := service.Delete(tt.args.id)
 
 		// Verify
