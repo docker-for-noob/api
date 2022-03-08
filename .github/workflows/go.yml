@@ -17,8 +17,11 @@ jobs:
       with:
         go-version: 1.17
 
+    - name: Mod
+      run: go mod vendor
+
     - name: Build
-      run: go build -v ./...
+      run: go build cmd/httpserver/main.go
 
     - name: Test
-      run: go test -v ./...
+      run: go test -v -race ./...
