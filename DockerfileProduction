@@ -15,10 +15,13 @@ WORKDIR /go/src/api
 ENV GO111MODULE=on
 
 COPY go.mod .
-RUN go mod download
 
 # Copy over the source files
 COPY . .
+
+RUN go mod vendor
+
+RUN go mod download
 
 
 CMD [ "go", "run", "github.com/docker-generator/api/cmd/httpserver"]
