@@ -1,11 +1,10 @@
-package dockerHubRepository
+package repositories
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	domain "github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
-	"github.com/docker-generator/api/internal/repositories/redisRepository"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
 	"log"
@@ -14,14 +13,14 @@ import (
 
 type dockerHubApi struct{}
 
-func New() *dockerHubApi {
+func NewDockerHubApi() *dockerHubApi {
 	return &dockerHubApi{}
 }
 
 func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult, error) {
 	ctx := context.Background()
 
-	rdb, _ := redisRepository.GetClient(ctx)
+	rdb, _ := GetClient(ctx)
 	length := rdb.LLen(ctx, image+"-"+tag).Val()
 
 	var dockerHubTags []string
