@@ -6,7 +6,6 @@ import (
 	ports "github.com/docker-generator/api/internal/core/ports/authentification"
 	"github.com/go-chi/jwtauth/v5"
 	"net/http"
-	"time"
 )
 
 type HTTPHandler struct {
@@ -34,19 +33,9 @@ func (h HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "jwt",
-		HttpOnly: true,
-		Value:    token.Data,
-		Path:     "/",
-	}
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-
 	w.Header().Set("content-type", "application/json;charset=UTF-8")
-	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(token.Data))
 }
 
 func (h HTTPHandler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -58,14 +47,6 @@ func (h HTTPHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	cookie := http.Cookie{
-		Name:    "jwt",
-		MaxAge:  -1,
-		Value:   "",
-		Path:    "/",
-		Expires: time.Unix(0, 0),
-	}
-
 	w.Header().Set("content-type", "application/json;charset=UTF-8")
-	http.SetCookie(w, &cookie)
+	w.WriteHeader(http.StatusOK)
 }
