@@ -3,9 +3,10 @@ package repositories
 import (
 	"context"
 	"github.com/go-redis/redis/v8"
+	"log"
 )
 
-func GetClient(ctx context.Context) (*redis.Client, error) {
+func GetClient(ctx context.Context) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379", // use default Addr
 		Password: "",               // no password set
@@ -14,5 +15,9 @@ func GetClient(ctx context.Context) (*redis.Client, error) {
 
 	_, err := rdb.Ping(ctx).Result()
 
-	return rdb, err
+	if err != nil {
+		log.Fatalf("Failed to connect redis: %v", err)
+	}
+
+	return rdb
 }
