@@ -44,6 +44,5 @@ func (srv *authentificationService) Logout(id string) error {
 		return errors.New(apperrors.Internal, err, "An internal error occurred", "")
 	}
 
-	return errors.New(apperrors.Internal, err, "An internal error occurred", "")
-
+	return nil
 }

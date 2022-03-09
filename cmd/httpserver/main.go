@@ -13,6 +13,7 @@ import (
 	"github.com/docker-generator/api/internal/handlers/userHandlers"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
+	"github.com/docker-generator/api/pkg/uidgen"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 	"net/http"
@@ -32,6 +33,7 @@ func main() {
 		userRepositoryInstanciated,
 		BcryptRepositoryInstanciated,
 		passwordValidatorRepositoryInstanciated,
+		uidgen.New(),
 	)
 	authentificationwithJWTServiceInstanciated := authentificationWithJWTService.New(
 		authentificationRepositoryInstanciated,

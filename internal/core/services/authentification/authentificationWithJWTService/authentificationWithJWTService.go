@@ -4,6 +4,8 @@ import (
 	"github.com/docker-generator/api/internal/core/domain"
 	authentificationPorts "github.com/docker-generator/api/internal/core/ports/authentification"
 	securityPorts "github.com/docker-generator/api/internal/core/ports/security"
+	apperrors "github.com/docker-generator/api/pkg/apperror"
+	"github.com/matiasvarela/errors"
 )
 
 type authentificationWithCookieService struct {
@@ -23,13 +25,22 @@ func New(
 
 func (a authentificationWithCookieService) Login(creds domain.Credentials) (domain.JwtToken, error) {
 	user, err := a.authentificationRepository.Login(creds)
+	if err != nil {
+		return domain.JwtToken{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
+	}
+	token, err := a.JWTRepository.CreateJWTTokenString(user)
 
-	cookie, _ := a.JWTRepository.CreateJWTTokenString(user)
-
-	return cookie, err
+	if err != nil {
+		return domain.JwtToken{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
+	}
+	return token, err
 }
 
 func (a authentificationWithCookieService) Logout(id string) error {
+	err := a.authentificationRepository.Logout(id)
 
-	return a.authentificationRepository.Logout(id)
+	if err != nil {
+		return errors.New(apperrors.Internal, err, "An internal error occurred", "")
+	}
+	return nil
 }

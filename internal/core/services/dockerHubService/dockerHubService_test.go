@@ -18,7 +18,7 @@ type mockers struct {
 func TestGetImageRequest(t *testing.T) {
 
 	//Mocks//
-	sampleWantedDockerHub := dockerHubDomain.DockerHub{DockerHubData: []byte("{name: 'node', namespace: 'library'")}
+	sampleWantedDockerHub := dockerHubDomain.DockerHubResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
 
 	//Tests//
 
@@ -28,7 +28,7 @@ func TestGetImageRequest(t *testing.T) {
 	}
 
 	type want struct {
-		result dockerHubDomain.DockerHub
+		result dockerHubDomain.DockerHubResult
 		err    error
 	}
 
@@ -40,7 +40,7 @@ func TestGetImageRequest(t *testing.T) {
 	}{
 		{
 			name: "Should get image successfully",
-			args: args{image: "node"},
+			args: args{image: "node", tag: "latest"},
 			want: want{result: sampleWantedDockerHub},
 			mocks: func(m mockers) {
 				m.dockerHubRepository.EXPECT().Read("node", "latest").Return(sampleWantedDockerHub, nil)
@@ -48,10 +48,16 @@ func TestGetImageRequest(t *testing.T) {
 		},
 		{
 			name: "Should return a NotFound error",
-			args: args{image: "noda"},
-			want: want{err: errors.New(apperrors.NotFound, nil, "Image not found in docker hub", "")},
+			args: args{image: "noda", tag: "latest"},
+			want: want{result: dockerHubDomain.DockerHubResult{},
+				err: errors.New(
+					apperrors.NotFound,
+					nil,
+					"Not found",
+					"",
+				)},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(dockerHubDomain.DockerHub{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(dockerHubDomain.DockerHubResult{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 	}

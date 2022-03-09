@@ -5,7 +5,7 @@ import (
 	"github.com/docker-generator/api/internal/core/ports/user"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/docker-generator/api/pkg/formater"
-	"github.com/google/uuid"
+	"github.com/docker-generator/api/pkg/uidgen"
 	"github.com/matiasvarela/errors"
 )
 
@@ -13,17 +13,20 @@ type userService struct {
 	userRepository              ports.UserRepository
 	BCryptRepository            ports.BCryptRepository
 	passwordValidatorRepository ports.PasswordValidatorRepository
+	uuidgenerator               uidgen.UIDGen
 }
 
 func New(
 	userRepository ports.UserRepository,
 	BCryptRepository ports.BCryptRepository,
 	passwordValidatorRepository ports.PasswordValidatorRepository,
+	uuidgenerator uidgen.UIDGen,
 ) *userService {
 	return &userService{
 		userRepository:              userRepository,
 		BCryptRepository:            BCryptRepository,
 		passwordValidatorRepository: passwordValidatorRepository,
+		uuidgenerator:               uuidgenerator,
 	}
 }
 
@@ -53,7 +56,7 @@ func (srv *userService) Post(user domain.User) (domain.User, error) {
 		return domain.User{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
 	}
 
-	user.ID = uuid.New().String()
+	user.ID = srv.uuidgenerator.NewUuid()
 	user.Password = pass
 
 	user.Email = formater.NormalizeEmail(user.Email)
