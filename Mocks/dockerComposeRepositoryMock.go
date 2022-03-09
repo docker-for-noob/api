@@ -35,18 +35,18 @@ func (m *MockDockerComposeRepository) EXPECT() *MockDockerComposeRepositoryMockR
 }
 
 // Create mocks base method.
-func (m *MockDockerComposeRepository) Create(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) Create(dockerCompose domain.DockerCompose, id string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", dockerCompose)
+	ret := m.ctrl.Call(m, "Create", dockerCompose, id)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockDockerComposeRepositoryMockRecorder) Create(dockerCompose interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Create(dockerCompose, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), dockerCompose)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), dockerCompose, id)
 }
 
 // Delete mocks base method.

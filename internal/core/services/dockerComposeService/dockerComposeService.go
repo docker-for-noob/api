@@ -4,18 +4,21 @@ import (
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/ports"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
+	"github.com/docker-generator/api/pkg/uidgen"
 	"github.com/matiasvarela/errors"
 )
 
 type dockerComposeService struct {
 	dockerComposeRepository ports.DockerComposeRepository
 	versionService ports.VersionService
+	uuidGenerator uidgen.UIDGen
 }
 
-func New(dockerComposeRepository ports.DockerComposeRepository, versionService ports.VersionService) *dockerComposeService {
+func New(dockerComposeRepository ports.DockerComposeRepository, versionService ports.VersionService, uuidGenerator uidgen.UIDGen) *dockerComposeService {
 	return &dockerComposeService{
 		dockerComposeRepository: dockerComposeRepository,
 		versionService: versionService,
+		uuidGenerator: uuidGenerator,
 	}
 }
 
@@ -44,7 +47,9 @@ func (srv *dockerComposeService) Get(id string) (domain.DockerCompose, error) {
 }
 func (srv *dockerComposeService) Post(dockerCompose domain.DockerCompose) (domain.DockerCompose, error){
 
-	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose)
+	dockerComposeId := srv.uuidGenerator.NewUuid()
+
+	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose, dockerComposeId)
 
 	if err != nil {
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
