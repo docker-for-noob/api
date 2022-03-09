@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"github.com/docker-generator/api/internal/core/services/authentification/authentificationWithJWTService"
 	"github.com/docker-generator/api/internal/core/services/dockerComposeService"
+	"github.com/docker-generator/api/internal/core/services/dockerHubService"
 	"github.com/docker-generator/api/internal/core/services/userService"
 	"github.com/docker-generator/api/internal/core/services/versionService"
 	"github.com/docker-generator/api/internal/handlers"
 	"github.com/docker-generator/api/internal/handlers/authentificationHandlers"
+	"github.com/docker-generator/api/internal/handlers/dockerHubHandler"
 	"github.com/docker-generator/api/internal/handlers/userHandlers"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
@@ -25,6 +27,7 @@ func main() {
 	passwordValidatorRepositoryInstanciated := repositories.NewPasswodValidatorRepository()
 	dockerComposeRepositoryInstanciated := repositories.NewDockerComposeFirestore()
 	versionFirestoreRepositoryIntanciated := repositories.NewVersionFirestore()
+	dockerHubRepositoryInstanciated := repositories.NewDockerHubApi()
 
 	userServiceInstanciated := userService.New(
 		userRepositoryInstanciated,
@@ -44,14 +47,13 @@ func main() {
 		versionServiceInstanciated,
 	)
 
+	dockerHubServiceInstanciated := dockerHubService.New(dockerHubRepositoryInstanciated)
+
 	dockerComposeHandler := handlers.NewDockerComposeHTTPHandler(dockerComposeServiceInstanciated)
 	versionHandler := handlers.NewVersionHTTPHandler(versionServiceInstanciated)
 	userHandler := userHandlers.New(userServiceInstanciated)
 	authentificationHandler := authentificationHandlers.New(authentificationwithJWTServiceInstanciated)
-
-	varDockerHubRepository := dockerHubRepository.NewMemKVS()
-	varDockerHubService := dockerHubService.New(varDockerHubRepository)
-	varDockerHubHandler := dockerHubHandler.NewHTTPHandler(varDockerHubService)
+	dockerHubHandler := dockerHubHandler.NewHTTPHandler(dockerHubServiceInstanciated)
 
 	varDockerHubRepository := dockerHubRepository.NewMemKVS()
 	varDockerHubService := dockerHubService.New(varDockerHubRepository)
@@ -65,8 +67,8 @@ func main() {
 		publicRouter.Patch("/user/update/{id}", userHandler.Patch)
 		publicRouter.Delete("/user/{id}", userHandler.Delete)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
-		publicRouter.Get("/dockerHub/images", varDockerHubHandler.GetAll)
-		publicRouter.Get("/dockerHub/images/{image}", varDockerHubHandler.Get)
+		publicRouter.Get("/dockerHub/images", dockerHubHandler.GetAll)
+		publicRouter.Get("/dockerHub/images/{image}", dockerHubHandler.Get)
 	})
 
 	router.Group(func(privateRouter chi.Router) {

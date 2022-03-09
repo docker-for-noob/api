@@ -1,7 +1,7 @@
 package formater_test
 
 import (
-	formatService "github.com/docker-generator/api/internal/core/services/formatService"
+	"github.com/docker-generator/api/pkg/formater"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -35,7 +35,6 @@ func TestAuthentificationService_Login(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 
-		formater := formatService.New()
 		result := formater.NormalizeEmail(tt.args)
 
 		assert.Equal(t, tt.want.result, result)
