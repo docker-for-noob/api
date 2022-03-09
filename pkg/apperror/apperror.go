@@ -1,10 +1,12 @@
-package apperrors
+package apperror
 
-import "github.com/matiasvarela/errors"
+import (
+	"github.com/matiasvarela/errors"
+)
 
 var (
 	NotFound         = errors.Define("not_found")
 	IllegalOperation = errors.Define("illegal_operation")
-	InvalidInput      = errors.Define("invalid_input")
+	InvalidInput     = errors.Define("invalid_input")
 	Internal         = errors.Define("internal")
 )

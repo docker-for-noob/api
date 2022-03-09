@@ -1,8 +1,6 @@
 package uidgen
 
-import (
-	"github.com/google/uuid"
-)
+import "github.com/google/uuid"
 
 type UIDGen interface {
 	New() string
