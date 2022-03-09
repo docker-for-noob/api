@@ -9,7 +9,7 @@ import (
 	"github.com/docker-generator/api/internal/core/services/versionService"
 	"github.com/docker-generator/api/internal/handlers"
 	"github.com/docker-generator/api/internal/handlers/authentificationHandlers"
-	"github.com/docker-generator/api/internal/handlers/dockerHubHandler"
+	"github.com/docker-generator/api/internal/handlers/dockerHubHandlers"
 	"github.com/docker-generator/api/internal/handlers/userHandlers"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
@@ -52,7 +52,7 @@ func main() {
 	versionHandler := handlers.NewVersionHTTPHandler(versionServiceInstanciated)
 	userHandler := userHandlers.New(userServiceInstanciated)
 	authentificationHandler := authentificationHandlers.New(authentificationwithJWTServiceInstanciated)
-	dockerHubHandler := dockerHubHandler.NewHTTPHandler(dockerHubServiceInstanciated)
+	dockerHubHandler := dockerHubHandlers.NewHTTPHandler(dockerHubServiceInstanciated)
 
 	router := chi.NewRouter()
 
@@ -63,7 +63,7 @@ func main() {
 		publicRouter.Delete("/user/{id}", userHandler.Delete)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
 		publicRouter.Get("/dockerHub/images", dockerHubHandler.GetAll)
-		publicRouter.Get("/dockerHub/images/{image}", dockerHubHandler.Get)
+		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
 	})
 
 	router.Group(func(privateRouter chi.Router) {
