@@ -2,7 +2,7 @@ package dockerHubService_test
 
 import (
 	mock_ports "github.com/docker-generator/api/Mocks"
-	"github.com/docker-generator/api/internal/core/domain"
+	"github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
 	"github.com/docker-generator/api/internal/core/services/dockerHubService"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/golang/mock/gomock"
@@ -18,16 +18,17 @@ type mockers struct {
 func TestGetImageRequest(t *testing.T) {
 
 	//Mocks//
-	sampleWantedDockerHub := domain.DockerHub{DockerHubData: []byte("{name: 'node', namespace: 'library'")}
+	sampleWantedDockerHub := dockerHubDomain.DockerHub{DockerHubData: []byte("{name: 'node', namespace: 'library'")}
 
 	//Tests//
 
 	type args struct {
 		image string
+		tag   string
 	}
 
 	type want struct {
-		result domain.DockerHub
+		result dockerHubDomain.DockerHub
 		err    error
 	}
 
@@ -42,7 +43,7 @@ func TestGetImageRequest(t *testing.T) {
 			args: args{image: "node"},
 			want: want{result: sampleWantedDockerHub},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("node").Return(sampleWantedDockerHub, nil)
+				m.dockerHubRepository.EXPECT().Read("node", "latest").Return(sampleWantedDockerHub, nil)
 			},
 		},
 		{
@@ -50,7 +51,7 @@ func TestGetImageRequest(t *testing.T) {
 			args: args{image: "noda"},
 			want: want{err: errors.New(apperrors.NotFound, nil, "Image not found in docker hub", "")},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("noda").Return(domain.DockerHub{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(dockerHubDomain.DockerHub{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 	}
@@ -67,7 +68,7 @@ func TestGetImageRequest(t *testing.T) {
 		tt.mocks(m)
 		service := dockerHubService.New(m.dockerHubRepository)
 
-		result, err := service.Get(tt.args.image)
+		result, err := service.Get(tt.args.image, tt.args.tag)
 
 		// Verify
 		if tt.want.err != nil {

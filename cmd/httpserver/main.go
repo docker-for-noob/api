@@ -18,7 +18,6 @@ import (
 	"net/http"
 )
 
-
 func main() {
 	BcryptRepositoryInstanciated := repositories.NewBcryptRepository()
 	userRepositoryInstanciated := repositories.NewUserRepository()
@@ -54,10 +53,6 @@ func main() {
 	userHandler := userHandlers.New(userServiceInstanciated)
 	authentificationHandler := authentificationHandlers.New(authentificationwithJWTServiceInstanciated)
 	dockerHubHandler := dockerHubHandler.NewHTTPHandler(dockerHubServiceInstanciated)
-
-	varDockerHubRepository := dockerHubRepository.NewMemKVS()
-	varDockerHubService := dockerHubService.New(varDockerHubRepository)
-	varDockerHubHandler := dockerHubHandler.NewHTTPHandler(varDockerHubService)
 
 	router := chi.NewRouter()
 
