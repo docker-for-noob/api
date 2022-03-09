@@ -1,4 +1,4 @@
-package dockerHubDomain
+package domain
 
 type DockerHub struct {
 	DockerHubData []byte `json:"dockerHubData"`

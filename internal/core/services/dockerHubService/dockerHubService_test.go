@@ -2,7 +2,7 @@ package dockerHubService_test
 
 import (
 	mock_ports "github.com/docker-generator/api/Mocks"
-	"github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
+	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/services/dockerHubService"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/golang/mock/gomock"
@@ -18,7 +18,7 @@ type mockers struct {
 func TestGetImageRequest(t *testing.T) {
 
 	//Mocks//
-	sampleWantedDockerHub := dockerHubDomain.DockerHubResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
+	sampleWantedDockerHub := domain.DockerHubResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
 
 	//Tests//
 
@@ -28,7 +28,7 @@ func TestGetImageRequest(t *testing.T) {
 	}
 
 	type want struct {
-		result dockerHubDomain.DockerHubResult
+		result domain.DockerHubResult
 		err    error
 	}
 
@@ -49,7 +49,7 @@ func TestGetImageRequest(t *testing.T) {
 		{
 			name: "Should return a NotFound error",
 			args: args{image: "noda", tag: "latest"},
-			want: want{result: dockerHubDomain.DockerHubResult{},
+			want: want{result: domain.DockerHubResult{},
 				err: errors.New(
 					apperrors.NotFound,
 					nil,
@@ -57,7 +57,7 @@ func TestGetImageRequest(t *testing.T) {
 					"",
 				)},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(dockerHubDomain.DockerHubResult{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(domain.DockerHubResult{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 	}

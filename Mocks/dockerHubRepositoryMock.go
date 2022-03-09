@@ -5,10 +5,9 @@
 package mock_ports
 
 import (
-	http "net/http"
 	reflect "reflect"
 
-	dockerHubDomain "github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
+	domain "github.com/docker-generator/api/internal/core/domain"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,10 +35,10 @@ func (m *MockDockerHubRepository) EXPECT() *MockDockerHubRepositoryMockRecorder 
 }
 
 // Read mocks base method.
-func (m *MockDockerHubRepository) Read(image, tag string) (dockerHubDomain.DockerHubResult, error) {
+func (m *MockDockerHubRepository) Read(image, tag string) (domain.DockerHubResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Read", image, tag)
-	ret0, _ := ret[0].(dockerHubDomain.DockerHubResult)
+	ret0, _ := ret[0].(domain.DockerHubResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -48,21 +47,6 @@ func (m *MockDockerHubRepository) Read(image, tag string) (dockerHubDomain.Docke
 func (mr *MockDockerHubRepositoryMockRecorder) Read(image, tag interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockDockerHubRepository)(nil).Read), image, tag)
-}
-
-// ReadAll mocks base method.
-func (m *MockDockerHubRepository) ReadAll() (*http.Response, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadAll")
-	ret0, _ := ret[0].(*http.Response)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ReadAll indicates an expected call of ReadAll.
-func (mr *MockDockerHubRepositoryMockRecorder) ReadAll() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockDockerHubRepository)(nil).ReadAll))
 }
 
 // MockDockerHubService is a mock of DockerHubService interface.
@@ -89,10 +73,10 @@ func (m *MockDockerHubService) EXPECT() *MockDockerHubServiceMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockDockerHubService) Get(image, tag string) (dockerHubDomain.DockerHubResult, error) {
+func (m *MockDockerHubService) Get(image, tag string) (domain.DockerHubResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", image, tag)
-	ret0, _ := ret[0].(dockerHubDomain.DockerHubResult)
+	ret0, _ := ret[0].(domain.DockerHubResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -101,19 +85,4 @@ func (m *MockDockerHubService) Get(image, tag string) (dockerHubDomain.DockerHub
 func (mr *MockDockerHubServiceMockRecorder) Get(image, tag interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockDockerHubService)(nil).Get), image, tag)
-}
-
-// GetAll mocks base method.
-func (m *MockDockerHubService) GetAll() (*http.Response, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].(*http.Response)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAll indicates an expected call of GetAll.
-func (mr *MockDockerHubServiceMockRecorder) GetAll() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockDockerHubService)(nil).GetAll))
 }

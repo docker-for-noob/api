@@ -3,8 +3,7 @@ package repositories
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	domain "github.com/docker-generator/api/internal/core/domain/dockerHubDomain"
+	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
 	"log"
@@ -20,18 +19,14 @@ func NewDockerHubApi() *dockerHubApi {
 func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult, error) {
 	ctx := context.Background()
 
-	rdb, _ := GetClient(ctx)
+	rdb := GetClient(ctx)
 	length := rdb.LLen(ctx, image+"-"+tag).Val()
 
 	var dockerHubTags []string
 
 	if length > 0 {
-		fmt.Println("------------- REDIS -----------------")
-		fmt.Println(rdb.LRange(ctx, image+"-"+tag, 0, -1).Val())
-
 		dockerHubTags = rdb.LRange(ctx, image+"-"+tag, 0, -1).Val()
 	} else {
-		fmt.Println("-------------- DOCKER HUB ----------------")
 		resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag)
 
 		if err != nil {
@@ -45,7 +40,7 @@ func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult
 		err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
 
 		if err != nil {
-			fmt.Print(err)
+			log.Fatal(err)
 		}
 
 		for _, data := range dockerHubImage.Results {
@@ -53,7 +48,7 @@ func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult
 			errormessage := njson.Unmarshal([]byte(data), &finalData)
 
 			if errormessage != nil {
-				fmt.Println(errormessage)
+				log.Fatal(err)
 			}
 
 			encoded, _ := json.Marshal(finalData.Tag)
@@ -62,7 +57,6 @@ func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult
 
 			dockerHubTags = append(dockerHubTags, string(encoded))
 		}
-		fmt.Println(rdb.LRange(ctx, image+"-"+tag, 0, -1).Val())
 	}
 
 	dockerHubResult := domain.DockerHubResult{
@@ -70,13 +64,4 @@ func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult
 		Tags: dockerHubTags,
 	}
 	return dockerHubResult, nil
-}
-
-func (repo *dockerHubApi) ReadAll() (*http.Response, error) {
-	resp, err := http.Get("https://hub.docker.com/v2/repositories/library")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return resp, nil
 }

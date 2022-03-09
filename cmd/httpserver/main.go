@@ -65,7 +65,6 @@ func main() {
 		publicRouter.Patch("/user/update/{id}", userHandler.Patch)
 		publicRouter.Delete("/user/{id}", userHandler.Delete)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
-		publicRouter.Get("/dockerHub/images", dockerHubHandler.GetAll)
 		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
 	})
 
