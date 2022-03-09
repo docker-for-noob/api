@@ -14,6 +14,7 @@ import (
 type mockers struct {
 	dockerComposeRepository *mockports.MockDockerComposeRepository
 	versionService *mockports.MockVersionService
+	uuidGenerator *mockports.MockUIDGen
 }
 
 func TestDockerComposeService_GetAll(t *testing.T) {
@@ -79,10 +80,11 @@ func TestDockerComposeService_GetAll(t *testing.T) {
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
 			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+			uuidGenerator: mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService, m.uuidGenerator)
 
 		lastItemRank, result, err := service.GetAll(tt.args.firstItemRank)
 
@@ -153,10 +155,11 @@ func TestDockerComposeService_Get(t *testing.T) {
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
 			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+			uuidGenerator: mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService, m.uuidGenerator)
 
 		result, err := service.Get(tt.args.id)
 
@@ -174,11 +177,11 @@ func TestDockerComposeService_Post(t *testing.T) {
 
 	//Mocks//
 
-	id := "1001-1001-1001-1001"
+	sampleUuid := "1001-1001-1001-1001"
 
-	sampleWantedDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
-	sampleResultDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
-	sampleInputDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
+	sampleWantedDockerCompose := domain.DockerCompose{DockerComposeDatas: "{value: 'comme ça'"}
+	sampleResultDockerCompose := domain.DockerCompose{DockerComposeDatas: "{value: 'comme ça'"}
+	sampleInputDockerCompose := domain.DockerCompose{DockerComposeDatas: "{value: 'comme ça'"}
 
 	//Tests//
 
@@ -202,7 +205,8 @@ func TestDockerComposeService_Post(t *testing.T) {
 			args: args{dockerCompose: sampleInputDockerCompose},
 			want: want{result: sampleWantedDockerCompose},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose).Return(sampleResultDockerCompose, nil)
+				m.uuidGenerator.EXPECT().NewUuid().Return(sampleUuid)
+				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose, sampleUuid).Return(sampleResultDockerCompose, nil)
 			},
 		},
 		{
@@ -210,7 +214,8 @@ func TestDockerComposeService_Post(t *testing.T) {
 			args: args{dockerCompose: sampleInputDockerCompose},
 			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
+				m.uuidGenerator.EXPECT().NewUuid().Return(sampleUuid)
+				m.dockerComposeRepository.EXPECT().Create(sampleInputDockerCompose, sampleUuid).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}
@@ -223,10 +228,11 @@ func TestDockerComposeService_Post(t *testing.T) {
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
 			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+			uuidGenerator: mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService, m.uuidGenerator)
 		result, err := service.Post(tt.args.dockerCompose)
 
 		// Verify
@@ -320,10 +326,11 @@ func TestDockerComposeService_Patch(t *testing.T) {
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
 			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+			uuidGenerator: mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService, m.uuidGenerator)
 		result, err := service.Patch(tt.args.dockerCompose)
 
 		// Verify
@@ -392,10 +399,11 @@ func TestDockerComposeService_Delete(t *testing.T) {
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
 			versionService: mockports.NewMockVersionService(gomock.NewController(t)),
+			uuidGenerator: mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService)
+		service := dockerComposeService.New(m.dockerComposeRepository, m.versionService, m.uuidGenerator)
 		result, err := service.Delete(tt.args.id)
 
 		// Verify

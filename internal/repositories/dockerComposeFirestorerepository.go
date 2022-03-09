@@ -62,13 +62,13 @@ func (repo *dockerComposeFirestore) Read(id string) (domain.DockerCompose, error
 	}
 	return dockerComposeResult, nil
 }
-func (repo *dockerComposeFirestore) Create(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
+func (repo *dockerComposeFirestore) Create(dockerCompose domain.DockerCompose, id string) (domain.DockerCompose, error) {
 	ctx := context.Background()
 	client := CreateClient(ctx)
 	defer client.Close()
 
-	_, err := client.Collection("Users").Doc("1001-1001-1001-1001").Collection("Files").Doc(dockerCompose.Id).Set(ctx, map[string]interface{}{
-		"id": dockerCompose.Id,
+	_, err := client.Collection("Users").Doc("1001-1001-1001-1001").Collection("Files").Doc(id).Set(ctx, map[string]interface{}{
+		"id": id,
 		"name": dockerCompose.Name,
 		"DockerComposeDatas": dockerCompose.DockerComposeDatas,
 		"createdAt": firestore.ServerTimestamp,

@@ -46,6 +46,7 @@ func main() {
 	dockerComposeServiceInstanciated := dockerComposeService.New(
 		dockerComposeRepositoryInstanciated,
 		versionServiceInstanciated,
+		uidgen.New(),
 	)
 
 	dockerHubServiceInstanciated := dockerHubService.New(dockerHubRepositoryInstanciated)
