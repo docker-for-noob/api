@@ -8,12 +8,14 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/matiasvarela/errors"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/crypto/bcrypt"
 	"testing"
 )
 
 type mockers struct {
-	userRepository *mockports.MockUserRepository
+	userRepository              *mockports.MockUserRepository
+	BCryptRepository            *mockports.MockBCryptRepository
+	passwordValidatorRepository *mockports.MockPasswordValidatorRepository
+	uidgen                      *mockports.MockUIDGen
 }
 
 func TestUserService_Get(t *testing.T) {
@@ -89,11 +91,13 @@ func TestUserService_Get(t *testing.T) {
 		tt := tt
 
 		m := mockers{
-			userRepository: mockports.NewMockUserRepository(gomock.NewController(t)),
+			userRepository:              mockports.NewMockUserRepository(gomock.NewController(t)),
+			BCryptRepository:            mockports.NewMockBCryptRepository(gomock.NewController(t)),
+			passwordValidatorRepository: mockports.NewMockPasswordValidatorRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := userService.New(m.userRepository)
+		service := userService.New(m.userRepository, m.BCryptRepository, m.passwordValidatorRepository, m.uidgen)
 		result, err := service.Get(tt.args.id)
 
 		// Verify
@@ -183,11 +187,14 @@ func TestUserService_Patch(t *testing.T) {
 		tt := tt
 
 		m := mockers{
-			userRepository: mockports.NewMockUserRepository(gomock.NewController(t)),
+			userRepository:              mockports.NewMockUserRepository(gomock.NewController(t)),
+			BCryptRepository:            mockports.NewMockBCryptRepository(gomock.NewController(t)),
+			passwordValidatorRepository: mockports.NewMockPasswordValidatorRepository(gomock.NewController(t)),
+			uidgen:                      mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := userService.New(m.userRepository)
+		service := userService.New(m.userRepository, m.BCryptRepository, m.passwordValidatorRepository, m.uidgen)
 		result, err := service.Patch(tt.args.user.ID, tt.args.user)
 
 		// Verify
@@ -203,16 +210,12 @@ func TestUserService_Post(t *testing.T) {
 
 	//Mocks//
 
-	id := "1001-1001-1001-1001"
-
 	sampleCredentials := domain.Credentials{
 		Password: "Azerty1234567@",
 		Email:    "test@test.com",
 	}
-	id = "1001-1001-1001-1001"
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(sampleCredentials.Password), bcrypt.DefaultCost)
-	bcrypt.CompareHashAndPassword(hashedPassword, []byte(sampleCredentials.Password))
+	id := "1001-1001-1001-1001"
 
 	sampleWantedUser := domain.User{
 		ID:       id,
@@ -247,17 +250,12 @@ func TestUserService_Post(t *testing.T) {
 			args: args{user: sampleWantedUser},
 			want: want{result: sampleResultUser},
 			mocks: func(m mockers) {
+				m.passwordValidatorRepository.EXPECT().VerifyPasswordStrenght(sampleWantedUser.Password).Return(nil)
+				m.BCryptRepository.EXPECT().HashPassword(sampleWantedUser.Password).Return(sampleResultUser.Password, nil)
+				m.uidgen.EXPECT().NewUuid().Return(id)
 				m.userRepository.EXPECT().Create(sampleWantedUser).Return(sampleResultUser, nil)
 			},
 		},
-		//{
-		//	name: "Should return a Internal error",
-		//	args: args{user: domain.User{}},
-		//	want: want{err: errors.New(apperrors.Internal, nil, "An internal error occurred", "")},
-		//	mocks: func(m mockers) {
-		//		m.userRepository.EXPECT().Create(domain.User{}).Return(domain.User{}, errors.New(apperrors.Internal, nil, "", ""))
-		//	},
-		//},
 	}
 
 	// Test Runner //
@@ -266,11 +264,14 @@ func TestUserService_Post(t *testing.T) {
 		tt := tt
 
 		m := mockers{
-			userRepository: mockports.NewMockUserRepository(gomock.NewController(t)),
+			userRepository:              mockports.NewMockUserRepository(gomock.NewController(t)),
+			BCryptRepository:            mockports.NewMockBCryptRepository(gomock.NewController(t)),
+			passwordValidatorRepository: mockports.NewMockPasswordValidatorRepository(gomock.NewController(t)),
+			uidgen:                      mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := userService.New(m.userRepository)
+		service := userService.New(m.userRepository, m.BCryptRepository, m.passwordValidatorRepository, m.uidgen)
 		result, err := service.Post(tt.args.user)
 
 		// Verify
@@ -278,7 +279,10 @@ func TestUserService_Post(t *testing.T) {
 			assert.Equal(t, errors.Code(tt.want.err), errors.Code(err))
 			assert.Equal(t, tt.want.err.Error(), err.Error())
 		}
-		assert.Equal(t, tt.want.result, result)
+
+		assert.Equal(t, tt.want.result.ID, id)
+		assert.Equal(t, tt.want.result.Email, result.Email)
+		assert.Equal(t, tt.want.result.Password, result.Password)
 	}
 }
 
@@ -336,11 +340,14 @@ func TestUserService_Delete(t *testing.T) {
 		tt := tt
 
 		m := mockers{
-			userRepository: mockports.NewMockUserRepository(gomock.NewController(t)),
+			userRepository:              mockports.NewMockUserRepository(gomock.NewController(t)),
+			BCryptRepository:            mockports.NewMockBCryptRepository(gomock.NewController(t)),
+			passwordValidatorRepository: mockports.NewMockPasswordValidatorRepository(gomock.NewController(t)),
+			uidgen:                      mockports.NewMockUIDGen(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := userService.New(m.userRepository)
+		service := userService.New(m.userRepository, m.BCryptRepository, m.passwordValidatorRepository, m.uidgen)
 		result, err := service.Delete(tt.args.id)
 
 		// Verify

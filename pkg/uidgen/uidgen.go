@@ -3,7 +3,7 @@ package uidgen
 import "github.com/google/uuid"
 
 type UIDGen interface {
-	New() string
+	NewUuid() string
 }
 
 type uidgen struct{}
@@ -12,6 +12,6 @@ func New() UIDGen {
 	return &uidgen{}
 }
 
-func (u uidgen) New() string {
+func (u uidgen) NewUuid() string {
 	return uuid.New().String()
 }
