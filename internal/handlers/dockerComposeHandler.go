@@ -53,6 +53,7 @@ func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter,
 	}
 
 	w.Header().Set("content-type", "application/json;charset=UTF-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	w.WriteHeader(http.StatusCreated)
 }
