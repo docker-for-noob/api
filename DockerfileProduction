@@ -21,6 +21,8 @@ COPY . .
 
 RUN mv /go/src/api/.env.dist /go/src/api/.env
 
+ENV GOOGLE_APPLICATION_CREDENTIALS=/go/src/api/application_default_credentials.json
+
 RUN go mod vendor
 
 RUN go mod download

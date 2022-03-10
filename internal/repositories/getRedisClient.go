@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-redis/redis/v8"
 	"log"
+	"github.com/docker-generator/api/pkg/goDotEnv"
 )
 
 func GetClient(ctx context.Context) *redis.Client {
