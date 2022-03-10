@@ -1,6 +1,7 @@
 package dockerHubHandlers
 
 import (
+	"encoding/json"
 	"github.com/docker-generator/api/internal/core/ports"
 	"github.com/go-chi/chi/v5"
 	"net/http"
@@ -20,7 +21,7 @@ func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 	image := chi.URLParam(r, "image")
 	tag := chi.URLParam(r, "*")
 
-	_, err := h.dockerHubService.Get(image, tag)
+	resp, err := h.dockerHubService.Get(image, tag)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -28,4 +29,13 @@ func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	result, err := json.Marshal(resp)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(result)
 }
