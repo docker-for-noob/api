@@ -12,6 +12,7 @@ import (
 	"github.com/docker-generator/api/internal/handlers/authentificationHandlers"
 	"github.com/docker-generator/api/internal/handlers/dockerHubHandlers"
 	"github.com/docker-generator/api/internal/handlers/userHandlers"
+	Middleware "github.com/docker-generator/api/internal/middleware"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
 	"github.com/docker-generator/api/pkg/uidgen"
@@ -64,6 +65,7 @@ func main() {
 	dockerHubHandler := dockerHubHandlers.NewHTTPHandler(dockerHubServiceInstanciated)
 
 	router := chi.NewRouter()
+	router.Use(Middleware.CORSMiddleware)
 
 	router.Group(func(publicRouter chi.Router) {
 		publicRouter.Post("/user", userHandler.Post)
