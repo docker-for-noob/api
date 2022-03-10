@@ -69,7 +69,7 @@ func main() {
 		publicRouter.Post("/user", userHandler.Post)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
 		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
-		publicRouter.Get("/*", httpSwagger.Handler(
+		publicRouter.Get("/swagger", httpSwagger.Handler(
 			httpSwagger.URL(":8080/swagger/doc.json"), //The url pointing to API definition
 		))
 	})
