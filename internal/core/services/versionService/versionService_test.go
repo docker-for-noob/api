@@ -13,21 +13,23 @@ import (
 
 type mockers struct {
 	dockerComposeRepository *mockports.MockDockerComposeRepository
-	versionrepository *mockports.MockVersionRepository
+	versionrepository       *mockports.MockVersionRepository
 }
 
 func TestVersionService_Add(t *testing.T) {
 
 	id := "1001-1001-1001-1001"
+	userId := "1001"
 
 	sampleResultDockerCompose := domain.DockerCompose{Id: id, DockerComposeDatas: "{value: 'comme ça'"}
 
 	type args struct {
-		id string
+		id     string
+		userId string
 	}
 
 	type want struct {
-		err    error
+		err error
 	}
 
 	tests := []struct {
@@ -38,36 +40,36 @@ func TestVersionService_Add(t *testing.T) {
 	}{
 		{
 			name: "Should add a dockerCompose version successfully",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{err: nil},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(sampleResultDockerCompose, nil)
-				m.versionrepository.EXPECT().Create(sampleResultDockerCompose).Return(nil)
+				m.dockerComposeRepository.EXPECT().Read(id, userId).Return(sampleResultDockerCompose, nil)
+				m.versionrepository.EXPECT().Create(sampleResultDockerCompose, userId).Return(nil)
 			},
 		},
 		{
 			name: "dockerCompose Read return a not found error",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{err: errors.New(apperrors.NotFound, nil, "previous docker-compose version not found", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Read(id, userId).Return(domain.DockerCompose{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 		{
 			name: "dockerCompose Read return a internal error",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occured while searching the pervious version", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Read(id, userId).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 		{
 			name: "Version create return a internal error",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occured while creating the version", "")},
 			mocks: func(m mockers) {
-				m.dockerComposeRepository.EXPECT().Read("1001-1001-1001-1001").Return(sampleResultDockerCompose, nil)
-				m.versionrepository.EXPECT().Create(sampleResultDockerCompose).Return(errors.New(apperrors.Internal, nil, "", ""))
+				m.dockerComposeRepository.EXPECT().Read(id, userId).Return(sampleResultDockerCompose, nil)
+				m.versionrepository.EXPECT().Create(sampleResultDockerCompose, userId).Return(errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}
@@ -77,12 +79,12 @@ func TestVersionService_Add(t *testing.T) {
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
-			versionrepository: mockports.NewMockVersionRepository(gomock.NewController(t)),
+			versionrepository:       mockports.NewMockVersionRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
 		service := versionService.New(m.dockerComposeRepository, m.versionrepository)
-		err := service.Add(tt.args.id)
+		err := service.Add(tt.args.id, tt.args.userId)
 
 		// Verify
 		if tt.want.err != nil {
@@ -101,12 +103,14 @@ func TestVersionService_Get(t *testing.T) {
 
 	id := "1001-1001-1001-1001"
 	idVersion := "1646256391"
+	userId := "1001"
 
 	sampleResultDockerCompose := domain.DockerCompose{Id: idVersion, DockerComposeDatas: "{value: 'comme ça'"}
 
 	type args struct {
-		id string
+		id        string
 		idVersion string
+		userId    string
 	}
 
 	type want struct {
@@ -122,26 +126,26 @@ func TestVersionService_Get(t *testing.T) {
 	}{
 		{
 			name: "Should add a dockerCompose version successfully",
-			args: args{id: "1001-1001-1001-1001", idVersion: "1646256391"},
+			args: args{id: id, idVersion: idVersion, userId: userId},
 			want: want{result: sampleResultDockerCompose, err: nil},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().Read(id, idVersion).Return(sampleResultDockerCompose, nil)
+				m.versionrepository.EXPECT().Read(id, idVersion, userId).Return(sampleResultDockerCompose, nil)
 			},
 		},
 		{
 			name: "repository Read return a not found error",
-			args: args{id: "1001-1001-1001-1001", idVersion: "1646256391"},
+			args: args{id: id, idVersion: idVersion, userId: userId},
 			want: want{result: domain.DockerCompose{}, err: errors.New(apperrors.NotFound, nil, "version not found", "")},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().Read(id, idVersion).Return(domain.DockerCompose{}, nil)
+				m.versionrepository.EXPECT().Read(id, idVersion, userId).Return(domain.DockerCompose{}, nil)
 			},
 		},
 		{
 			name: "repository Read return a internal error",
-			args: args{id: "1001-1001-1001-1001", idVersion: "1646256391"},
+			args: args{id: id, idVersion: idVersion, userId: userId},
 			want: want{result: domain.DockerCompose{}, err: errors.New(apperrors.Internal, nil, "an error occured while searching the version", "")},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().Read(id, idVersion).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "an error occured while searching the version", ""))
+				m.versionrepository.EXPECT().Read(id, idVersion, userId).Return(domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "an error occured while searching the version", ""))
 			},
 		},
 	}
@@ -151,12 +155,12 @@ func TestVersionService_Get(t *testing.T) {
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
-			versionrepository: mockports.NewMockVersionRepository(gomock.NewController(t)),
+			versionrepository:       mockports.NewMockVersionRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
 		service := versionService.New(m.dockerComposeRepository, m.versionrepository)
-		result, err := service.Get(tt.args.id, tt.args.idVersion)
+		result, err := service.Get(tt.args.id, tt.args.idVersion, tt.args.userId)
 
 		// Verify
 		if tt.want.err != nil {
@@ -172,14 +176,15 @@ func TestVersionService_Get(t *testing.T) {
 func TestVersionService_GetAll(t *testing.T) {
 
 	id := "1001-1001-1001-1001"
-
+	userId := "1001"
 	sampleResultDockerCompose := []domain.DockerCompose{
 		{Id: "1646256391", DockerComposeDatas: "{id: '1646256391', value: 'comme ça'"},
 		{Id: "1646254757", DockerComposeDatas: "{id: '1646254757', value: 'comme ça'"},
 	}
 
 	type args struct {
-		id string
+		id     string
+		userId string
 	}
 
 	type want struct {
@@ -195,26 +200,26 @@ func TestVersionService_GetAll(t *testing.T) {
 	}{
 		{
 			name: "Should add a dockerCompose version successfully",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{result: sampleResultDockerCompose, err: nil},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().ReadAll(id).Return(sampleResultDockerCompose, nil)
+				m.versionrepository.EXPECT().ReadAll(id, userId).Return(sampleResultDockerCompose, nil)
 			},
 		},
 		{
 			name: "service ReadAll should return a not found error",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{result: []domain.DockerCompose{}, err: errors.New(apperrors.NotFound, nil, "version not found", "")},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().ReadAll(id).Return([]domain.DockerCompose{}, nil)
+				m.versionrepository.EXPECT().ReadAll(id, userId).Return([]domain.DockerCompose{}, nil)
 			},
 		},
 		{
 			name: "repository Read return a internal error",
-			args: args{id: "1001-1001-1001-1001"},
+			args: args{id: id, userId: userId},
 			want: want{result: []domain.DockerCompose{}, err: errors.New(apperrors.Internal, nil, "an error occured while searching the version", "")},
 			mocks: func(m mockers) {
-				m.versionrepository.EXPECT().ReadAll(id).Return([]domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "an error occured while searching the version", ""))
+				m.versionrepository.EXPECT().ReadAll(id, userId).Return([]domain.DockerCompose{}, errors.New(apperrors.Internal, nil, "an error occured while searching the version", ""))
 			},
 		},
 	}
@@ -224,12 +229,12 @@ func TestVersionService_GetAll(t *testing.T) {
 
 		m := mockers{
 			dockerComposeRepository: mockports.NewMockDockerComposeRepository(gomock.NewController(t)),
-			versionrepository: mockports.NewMockVersionRepository(gomock.NewController(t)),
+			versionrepository:       mockports.NewMockVersionRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
 		service := versionService.New(m.dockerComposeRepository, m.versionrepository)
-		result, err := service.GetAll(tt.args.id)
+		result, err := service.GetAll(tt.args.id, tt.args.userId)
 
 		// Verify
 		if tt.want.err != nil {

@@ -11,24 +11,24 @@ import (
 	"time"
 )
 
-type versionFirestore struct {}
+type versionFirestore struct{}
 
-func NewVersionFirestore() *versionFirestore{
+func NewVersionFirestore() *versionFirestore {
 	return &versionFirestore{}
 }
 
-func (repo *versionFirestore) Create(versionDatas domain.DockerCompose) error{
+func (repo *versionFirestore) Create(versionDatas domain.DockerCompose, userId string) error {
 	ctx := context.Background()
 	client := CreateClient(ctx)
 	defer client.Close()
 
 	versionId := time.Now().Unix()
 
-	_, err := client.Collection("Users").Doc("1001-1001-1001-1001").Collection("Files").Doc(versionDatas.Id).Collection("Version").Doc(strconv.FormatInt(versionId, 10)).Set(ctx, map[string]interface{}{
-		"id": versionId,
-		"name": versionDatas.Name,
+	_, err := client.Collection("Users").Doc(userId).Collection("Files").Doc(versionDatas.Id).Collection("Version").Doc(strconv.FormatInt(versionId, 10)).Set(ctx, map[string]interface{}{
+		"id":                 versionId,
+		"name":               versionDatas.Name,
 		"DockerComposeDatas": versionDatas.DockerComposeDatas,
-		"createdAt": firestore.ServerTimestamp,
+		"createdAt":          firestore.ServerTimestamp,
 	})
 	if err != nil {
 		return errors.New(apperrors.Internal, err, "An internal error occurred", "")
@@ -37,12 +37,12 @@ func (repo *versionFirestore) Create(versionDatas domain.DockerCompose) error{
 	return nil
 }
 
-func (repo *versionFirestore) Read(idDockerCompose string, idVersion string) (domain.DockerCompose, error) {
+func (repo *versionFirestore) Read(idDockerCompose string, idVersion string, userId string) (domain.DockerCompose, error) {
 	ctx := context.Background()
 	client := CreateClient(ctx)
 	defer client.Close()
 
-	versionSearch, err := client.Collection("Users").Doc("1001-1001-1001-1001").Collection("Files").Doc(idDockerCompose).Collection("Version").Doc(idVersion).Get(ctx)
+	versionSearch, err := client.Collection("Users").Doc(userId).Collection("Files").Doc(idDockerCompose).Collection("Version").Doc(idVersion).Get(ctx)
 	if err != nil {
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
 	}
@@ -60,13 +60,13 @@ func (repo *versionFirestore) Read(idDockerCompose string, idVersion string) (do
 	return versionResult, nil
 }
 
-func (repo *versionFirestore) ReadAll(idDockerCompose string) ([]domain.DockerCompose, error)  {
+func (repo *versionFirestore) ReadAll(idDockerCompose string, userId string) ([]domain.DockerCompose, error) {
 
 	ctx := context.Background()
 	client := CreateClient(ctx)
 	defer client.Close()
 
-	allVersionsSearch := client.Collection("Users").Doc("1001-1001-1001-1001").Collection("Files").Doc(idDockerCompose).Collection("Version").OrderBy("createdAt", firestore.Desc).Documents(ctx)
+	allVersionsSearch := client.Collection("Users").Doc(userId).Collection("Files").Doc(idDockerCompose).Collection("Version").OrderBy("createdAt", firestore.Desc).Documents(ctx)
 
 	versionsItems, err := allVersionsSearch.GetAll()
 	if err != nil {

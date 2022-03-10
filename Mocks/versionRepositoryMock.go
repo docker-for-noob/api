@@ -35,47 +35,47 @@ func (m *MockVersionRepository) EXPECT() *MockVersionRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockVersionRepository) Create(dockerCompose domain.DockerCompose) error {
+func (m *MockVersionRepository) Create(dockerCompose domain.DockerCompose, userId string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", dockerCompose)
+	ret := m.ctrl.Call(m, "Create", dockerCompose, userId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockVersionRepositoryMockRecorder) Create(dockerCompose interface{}) *gomock.Call {
+func (mr *MockVersionRepositoryMockRecorder) Create(dockerCompose, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVersionRepository)(nil).Create), dockerCompose)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVersionRepository)(nil).Create), dockerCompose, userId)
 }
 
 // Read mocks base method.
-func (m *MockVersionRepository) Read(id, idVersion string) (domain.DockerCompose, error) {
+func (m *MockVersionRepository) Read(id, idVersion, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Read", id, idVersion)
+	ret := m.ctrl.Call(m, "Read", id, idVersion, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Read indicates an expected call of Read.
-func (mr *MockVersionRepositoryMockRecorder) Read(id, idVersion interface{}) *gomock.Call {
+func (mr *MockVersionRepositoryMockRecorder) Read(id, idVersion, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockVersionRepository)(nil).Read), id, idVersion)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockVersionRepository)(nil).Read), id, idVersion, userId)
 }
 
 // ReadAll mocks base method.
-func (m *MockVersionRepository) ReadAll(id string) ([]domain.DockerCompose, error) {
+func (m *MockVersionRepository) ReadAll(id, userId string) ([]domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadAll", id)
+	ret := m.ctrl.Call(m, "ReadAll", id, userId)
 	ret0, _ := ret[0].([]domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ReadAll indicates an expected call of ReadAll.
-func (mr *MockVersionRepositoryMockRecorder) ReadAll(id interface{}) *gomock.Call {
+func (mr *MockVersionRepositoryMockRecorder) ReadAll(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockVersionRepository)(nil).ReadAll), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockVersionRepository)(nil).ReadAll), id, userId)
 }
 
 // MockVersionService is a mock of VersionService interface.
@@ -102,45 +102,45 @@ func (m *MockVersionService) EXPECT() *MockVersionServiceMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockVersionService) Add(dockerComposeId string) error {
+func (m *MockVersionService) Add(dockerComposeId, userId string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", dockerComposeId)
+	ret := m.ctrl.Call(m, "Add", dockerComposeId, userId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Add indicates an expected call of Add.
-func (mr *MockVersionServiceMockRecorder) Add(dockerComposeId interface{}) *gomock.Call {
+func (mr *MockVersionServiceMockRecorder) Add(dockerComposeId, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockVersionService)(nil).Add), dockerComposeId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockVersionService)(nil).Add), dockerComposeId, userId)
 }
 
 // Get mocks base method.
-func (m *MockVersionService) Get(id, idVersion string) (domain.DockerCompose, error) {
+func (m *MockVersionService) Get(id, idVersion, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", id, idVersion)
+	ret := m.ctrl.Call(m, "Get", id, idVersion, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockVersionServiceMockRecorder) Get(id, idVersion interface{}) *gomock.Call {
+func (mr *MockVersionServiceMockRecorder) Get(id, idVersion, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVersionService)(nil).Get), id, idVersion)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVersionService)(nil).Get), id, idVersion, userId)
 }
 
 // GetAll mocks base method.
-func (m *MockVersionService) GetAll(id string) ([]domain.DockerCompose, error) {
+func (m *MockVersionService) GetAll(id, userId string) ([]domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", id)
+	ret := m.ctrl.Call(m, "GetAll", id, userId)
 	ret0, _ := ret[0].([]domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll.
-func (mr *MockVersionServiceMockRecorder) GetAll(id interface{}) *gomock.Call {
+func (mr *MockVersionServiceMockRecorder) GetAll(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockVersionService)(nil).GetAll), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockVersionService)(nil).GetAll), id, userId)
 }

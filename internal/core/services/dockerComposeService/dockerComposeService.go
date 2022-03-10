@@ -22,19 +22,19 @@ func New(dockerComposeRepository ports.DockerComposeRepository, versionService p
 	}
 }
 
-func (srv *dockerComposeService) GetAll(firstItemRank int) (int, []domain.DockerCompose, error ) {
+func (srv *dockerComposeService) GetAll(firstItemRank int, userid string) (int, []domain.DockerCompose, error) {
 
-	dockerComposeList, err := srv.dockerComposeRepository.ReadAll(firstItemRank)
+	dockerComposeList, err := srv.dockerComposeRepository.ReadAll(firstItemRank, userid)
 	if err != nil {
 		return 0, []domain.DockerCompose{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
 	}
-	lastItemRank :=  firstItemRank + 25
+	lastItemRank := firstItemRank + 25
 	return lastItemRank, dockerComposeList, nil
 }
 
-func (srv *dockerComposeService) Get(id string) (domain.DockerCompose, error) {
+func (srv *dockerComposeService) Get(id string, userId string) (domain.DockerCompose, error) {
 
-	dockerCompose, err := srv.dockerComposeRepository.Read(id)
+	dockerCompose, err := srv.dockerComposeRepository.Read(id, userId)
 
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
@@ -45,11 +45,11 @@ func (srv *dockerComposeService) Get(id string) (domain.DockerCompose, error) {
 
 	return dockerCompose, nil
 }
-func (srv *dockerComposeService) Post(dockerCompose domain.DockerCompose) (domain.DockerCompose, error){
+func (srv *dockerComposeService) Post(dockerCompose domain.DockerCompose, userId string) (domain.DockerCompose, error) {
 
 	dockerComposeId := srv.uuidGenerator.NewUuid()
 
-	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose, dockerComposeId)
+	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose, dockerComposeId,userId)
 
 	if err != nil {
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
@@ -58,9 +58,9 @@ func (srv *dockerComposeService) Post(dockerCompose domain.DockerCompose) (domai
 	return dockerComposeResult, nil
 }
 
-func (srv *dockerComposeService) Patch(dockerCompose domain.DockerCompose) (domain.DockerCompose, error){
+func (srv *dockerComposeService) Patch(dockerCompose domain.DockerCompose, userId string) (domain.DockerCompose, error) {
 
-	versionErr := srv.versionService.Add(dockerCompose.Id)
+	versionErr := srv.versionService.Add(dockerCompose.Id, userId)
 
 	if versionErr != nil {
 		if errors.Is(versionErr, apperrors.NotFound) {
@@ -69,7 +69,7 @@ func (srv *dockerComposeService) Patch(dockerCompose domain.DockerCompose) (doma
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, versionErr, "An internal error occurred in versionService", "")
 	}
 
-	dockerComposeResult, err := srv.dockerComposeRepository.Update(dockerCompose)
+	dockerComposeResult, err := srv.dockerComposeRepository.Update(dockerCompose, userId)
 
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
@@ -83,9 +83,9 @@ func (srv *dockerComposeService) Patch(dockerCompose domain.DockerCompose) (doma
 	return dockerComposeResult, nil
 }
 
-func (srv *dockerComposeService) Delete(id string) (bool, error){
+func (srv *dockerComposeService) Delete(id string, userId string) (bool, error) {
 
-	isDeleted, err := srv.dockerComposeRepository.Delete(id)
+	isDeleted, err := srv.dockerComposeRepository.Delete(id, userId)
 
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {

@@ -48,7 +48,6 @@ func main() {
 		versionServiceInstanciated,
 		uidgen.New(),
 	)
-
 	dockerHubServiceInstanciated := dockerHubService.New(dockerHubRepositoryInstanciated)
 
 	dockerComposeHandler := handlers.NewDockerComposeHTTPHandler(dockerComposeServiceInstanciated)
