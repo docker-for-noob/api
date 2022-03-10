@@ -35,78 +35,80 @@ func (m *MockDockerComposeRepository) EXPECT() *MockDockerComposeRepositoryMockR
 }
 
 // Create mocks base method.
-func (m *MockDockerComposeRepository) Create(dockerCompose domain.DockerCompose, id string) (domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) Create(dockerCompose domain.DockerCompose, id, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", dockerCompose, id)
+	ret := m.ctrl.Call(m, "Create", dockerCompose, id, userId)
+
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockDockerComposeRepositoryMockRecorder) Create(dockerCompose, id interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Create(dockerCompose, id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), dockerCompose, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockDockerComposeRepository)(nil).Create), dockerCompose, id, userId)
+
 }
 
 // Delete mocks base method.
-func (m *MockDockerComposeRepository) Delete(id string) (bool, error) {
+func (m *MockDockerComposeRepository) Delete(id, userId string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", id)
+	ret := m.ctrl.Call(m, "Delete", id, userId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockDockerComposeRepositoryMockRecorder) Delete(id interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Delete(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockDockerComposeRepository)(nil).Delete), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockDockerComposeRepository)(nil).Delete), id, userId)
 }
 
 // Read mocks base method.
-func (m *MockDockerComposeRepository) Read(id string) (domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) Read(id, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Read", id)
+	ret := m.ctrl.Call(m, "Read", id, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Read indicates an expected call of Read.
-func (mr *MockDockerComposeRepositoryMockRecorder) Read(id interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Read(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockDockerComposeRepository)(nil).Read), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Read", reflect.TypeOf((*MockDockerComposeRepository)(nil).Read), id, userId)
 }
 
 // ReadAll mocks base method.
-func (m *MockDockerComposeRepository) ReadAll(firstItemRank int) ([]domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) ReadAll(firstItemRank int, userId string) ([]domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadAll", firstItemRank)
+	ret := m.ctrl.Call(m, "ReadAll", firstItemRank, userId)
 	ret0, _ := ret[0].([]domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ReadAll indicates an expected call of ReadAll.
-func (mr *MockDockerComposeRepositoryMockRecorder) ReadAll(firstItemRank interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) ReadAll(firstItemRank, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockDockerComposeRepository)(nil).ReadAll), firstItemRank)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAll", reflect.TypeOf((*MockDockerComposeRepository)(nil).ReadAll), firstItemRank, userId)
 }
 
 // Update mocks base method.
-func (m *MockDockerComposeRepository) Update(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
+func (m *MockDockerComposeRepository) Update(dockerCompose domain.DockerCompose, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", dockerCompose)
+	ret := m.ctrl.Call(m, "Update", dockerCompose, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockDockerComposeRepositoryMockRecorder) Update(dockerCompose interface{}) *gomock.Call {
+func (mr *MockDockerComposeRepositoryMockRecorder) Update(dockerCompose, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockDockerComposeRepository)(nil).Update), dockerCompose)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockDockerComposeRepository)(nil).Update), dockerCompose, userId)
 }
 
 // MockDockerComposeService is a mock of DockerComposeService interface.
@@ -133,39 +135,39 @@ func (m *MockDockerComposeService) EXPECT() *MockDockerComposeServiceMockRecorde
 }
 
 // Delete mocks base method.
-func (m *MockDockerComposeService) Delete(id string) (bool, error) {
+func (m *MockDockerComposeService) Delete(id, userId string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", id)
+	ret := m.ctrl.Call(m, "Delete", id, userId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockDockerComposeServiceMockRecorder) Delete(id interface{}) *gomock.Call {
+func (mr *MockDockerComposeServiceMockRecorder) Delete(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockDockerComposeService)(nil).Delete), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockDockerComposeService)(nil).Delete), id, userId)
 }
 
 // Get mocks base method.
-func (m *MockDockerComposeService) Get(id string) (domain.DockerCompose, error) {
+func (m *MockDockerComposeService) Get(id, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", id)
+	ret := m.ctrl.Call(m, "Get", id, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockDockerComposeServiceMockRecorder) Get(id interface{}) *gomock.Call {
+func (mr *MockDockerComposeServiceMockRecorder) Get(id, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockDockerComposeService)(nil).Get), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockDockerComposeService)(nil).Get), id, userId)
 }
 
 // GetAll mocks base method.
-func (m *MockDockerComposeService) GetAll(firstItemRank int) (int, []domain.DockerCompose, error) {
+func (m *MockDockerComposeService) GetAll(firstItemRank int, userId string) (int, []domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", firstItemRank)
+	ret := m.ctrl.Call(m, "GetAll", firstItemRank, userId)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].([]domain.DockerCompose)
 	ret2, _ := ret[2].(error)
@@ -173,37 +175,37 @@ func (m *MockDockerComposeService) GetAll(firstItemRank int) (int, []domain.Dock
 }
 
 // GetAll indicates an expected call of GetAll.
-func (mr *MockDockerComposeServiceMockRecorder) GetAll(firstItemRank interface{}) *gomock.Call {
+func (mr *MockDockerComposeServiceMockRecorder) GetAll(firstItemRank, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockDockerComposeService)(nil).GetAll), firstItemRank)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockDockerComposeService)(nil).GetAll), firstItemRank, userId)
 }
 
 // Patch mocks base method.
-func (m *MockDockerComposeService) Patch(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
+func (m *MockDockerComposeService) Patch(dockerCompose domain.DockerCompose, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Patch", dockerCompose)
+	ret := m.ctrl.Call(m, "Patch", dockerCompose, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Patch indicates an expected call of Patch.
-func (mr *MockDockerComposeServiceMockRecorder) Patch(dockerCompose interface{}) *gomock.Call {
+func (mr *MockDockerComposeServiceMockRecorder) Patch(dockerCompose, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockDockerComposeService)(nil).Patch), dockerCompose)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockDockerComposeService)(nil).Patch), dockerCompose, userId)
 }
 
 // Post mocks base method.
-func (m *MockDockerComposeService) Post(dockerCompose domain.DockerCompose) (domain.DockerCompose, error) {
+func (m *MockDockerComposeService) Post(dockerCompose domain.DockerCompose, userId string) (domain.DockerCompose, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Post", dockerCompose)
+	ret := m.ctrl.Call(m, "Post", dockerCompose, userId)
 	ret0, _ := ret[0].(domain.DockerCompose)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Post indicates an expected call of Post.
-func (mr *MockDockerComposeServiceMockRecorder) Post(dockerCompose interface{}) *gomock.Call {
+func (mr *MockDockerComposeServiceMockRecorder) Post(dockerCompose, userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Post", reflect.TypeOf((*MockDockerComposeService)(nil).Post), dockerCompose)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Post", reflect.TypeOf((*MockDockerComposeService)(nil).Post), dockerCompose, userId)
 }

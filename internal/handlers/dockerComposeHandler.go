@@ -6,6 +6,7 @@ import (
 	"github.com/docker-generator/api/internal/core/ports"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/matiasvarela/errors"
 	"net/http"
 	"strconv"
@@ -15,13 +16,13 @@ type dockerComposeHTTPHandler struct {
 	service ports.DockerComposeService
 }
 
-func NewDockerComposeHTTPHandler(dockerComposeService ports.DockerComposeService) *dockerComposeHTTPHandler{
+func NewDockerComposeHTTPHandler(dockerComposeService ports.DockerComposeService) *dockerComposeHTTPHandler {
 	return &dockerComposeHTTPHandler{
 		service: dockerComposeService,
 	}
 }
 
-func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter, r *http.Request){
+func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter, r *http.Request) {
 
 	dockerCompose := &domain.DockerCompose{}
 	err := json.NewDecoder(r.Body).Decode(dockerCompose)
@@ -29,8 +30,9 @@ func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter,
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	_, claims, _ := jwtauth.FromContext(r.Context())
 
-	_, err = handler.service.Post(*dockerCompose)
+	_, err = handler.service.Post(*dockerCompose, claims["user_id"].(string))
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -53,7 +55,8 @@ func (handler dockerComposeHTTPHandler) UpdateDockerCompose(w http.ResponseWrite
 		return
 	}
 
-	_, err = handler.service.Patch(*dockerCompose)
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	_, err = handler.service.Patch(*dockerCompose, claims["user_id"].(string))
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -71,7 +74,8 @@ func (handler dockerComposeHTTPHandler) UpdateDockerCompose(w http.ResponseWrite
 func (handler dockerComposeHTTPHandler) DeleteDockerCompose(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	_, err := handler.service.Delete(id)
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	_, err := handler.service.Delete(id, claims["user_id"].(string))
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -89,7 +93,8 @@ func (handler dockerComposeHTTPHandler) DeleteDockerCompose(w http.ResponseWrite
 func (handler dockerComposeHTTPHandler) FindOneDockerCompose(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	dockerCompose, err := handler.service.Get(id)
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	dockerCompose, err := handler.service.Get(id, claims["user_id"].(string))
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -112,9 +117,10 @@ func (handler dockerComposeHTTPHandler) FindOneDockerCompose(w http.ResponseWrit
 
 func (handler dockerComposeHTTPHandler) FindAllDockerCompose(w http.ResponseWriter, r *http.Request) {
 	fromItemString := chi.URLParam(r, "fromItem")
-	fromItem, err :=strconv.Atoi(fromItemString)
+	fromItem, err := strconv.Atoi(fromItemString)
 
-	lastItem, dockerComposeList, err := handler.service.GetAll(fromItem)
+	_, claims, _ := jwtauth.FromContext(r.Context())
+	lastItem, dockerComposeList, err := handler.service.GetAll(fromItem, claims["user_id"].(string))
 
 	if err != nil {
 		if errors.Is(err, apperrors.NotFound) {
@@ -127,7 +133,7 @@ func (handler dockerComposeHTTPHandler) FindAllDockerCompose(w http.ResponseWrit
 
 	resultDatas := struct {
 		LastItem int
-		Datas []domain.DockerCompose
+		Datas    []domain.DockerCompose
 	}{
 		lastItem,
 		dockerComposeList,
@@ -142,5 +148,3 @@ func (handler dockerComposeHTTPHandler) FindAllDockerCompose(w http.ResponseWrit
 	w.WriteHeader(http.StatusOK)
 	w.Write(result)
 }
-
-

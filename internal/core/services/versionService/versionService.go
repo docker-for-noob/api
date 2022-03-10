@@ -7,21 +7,21 @@ import (
 	"github.com/matiasvarela/errors"
 )
 
-type versionService struct{
+type versionService struct {
 	dockerComposeRepository ports.DockerComposeRepository
-	versionRepository ports.VersionRepository
+	versionRepository       ports.VersionRepository
 }
 
-func New(dockerComposeRepository ports.DockerComposeRepository, versionRepository ports.VersionRepository) *versionService{
+func New(dockerComposeRepository ports.DockerComposeRepository, versionRepository ports.VersionRepository) *versionService {
 	return &versionService{
 		dockerComposeRepository: dockerComposeRepository,
-		versionRepository: versionRepository,
+		versionRepository:       versionRepository,
 	}
 }
 
-func (srv *versionService) Add(dockerComposeId string) error  {
+func (srv *versionService) Add(dockerComposeId string, userId string) error {
 
-	previousVersion, readError := srv.dockerComposeRepository.Read(dockerComposeId)
+	previousVersion, readError := srv.dockerComposeRepository.Read(dockerComposeId, userId)
 	if readError != nil {
 		if errors.Is(readError, apperrors.NotFound) {
 			return errors.New(apperrors.NotFound, nil, "previous docker-compose version not found", "")
@@ -29,7 +29,7 @@ func (srv *versionService) Add(dockerComposeId string) error  {
 		return errors.New(apperrors.Internal, nil, "An internal error occured while searching the pervious version", "")
 	}
 
-	versionError := srv.versionRepository.Create(previousVersion)
+	versionError := srv.versionRepository.Create(previousVersion, userId)
 	if versionError != nil {
 		return errors.New(apperrors.Internal, nil, "An internal error occured while creating the version", "")
 	}
@@ -37,9 +37,9 @@ func (srv *versionService) Add(dockerComposeId string) error  {
 	return nil
 }
 
-func (srv *versionService) Get(dockerComposeId string, versionId string) (domain.DockerCompose, error)  {
+func (srv *versionService) Get(dockerComposeId string, versionId string, userId string) (domain.DockerCompose, error) {
 
-	dockerComposeVersion, err := srv.versionRepository.Read(dockerComposeId, versionId)
+	dockerComposeVersion, err := srv.versionRepository.Read(dockerComposeId, versionId, userId)
 	if err != nil {
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, err, "an error occured while searching the version", "")
 	}
@@ -51,9 +51,9 @@ func (srv *versionService) Get(dockerComposeId string, versionId string) (domain
 	return dockerComposeVersion, nil
 }
 
-func (srv *versionService) GetAll(dockerComposeId string) ([]domain.DockerCompose, error) {
+func (srv *versionService) GetAll(dockerComposeId string, userId string) ([]domain.DockerCompose, error) {
 
-	allVersions, err := srv.versionRepository.ReadAll(dockerComposeId)
+	allVersions, err := srv.versionRepository.ReadAll(dockerComposeId, userId)
 	if err != nil {
 		return []domain.DockerCompose{}, errors.New(apperrors.Internal, err, "an error occured while searching the version", "")
 	}
