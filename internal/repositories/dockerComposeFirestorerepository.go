@@ -68,7 +68,7 @@ func (repo *dockerComposeFirestore) Create(dockerCompose domain.DockerCompose, u
 	client := CreateClient(ctx)
 	defer client.Close()
 
-	_, err := client.Collection("Users").Doc(userId).Collection("Files").Doc(dockerCompose.Id).Set(ctx, map[string]interface{}{
+	_, err := client.Collection("Users").Doc(userId).Collection("Files").Doc(id).Set(ctx, map[string]interface{}{
 		"id":                 id,
 		"name":               dockerCompose.Name,
 
