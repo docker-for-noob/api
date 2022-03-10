@@ -1,0 +1,409 @@
+definitions:
+  domain.AllDockerComposeDTO:
+    properties:
+      datas:
+        items:
+          $ref: '#/definitions/domain.DockerCompose'
+        type: array
+      lastItem:
+        type: integer
+    type: object
+  domain.Credentials:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  domain.DockerCompose:
+    properties:
+      dockerData:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.DockerHubResult:
+    properties:
+      name:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact: {}
+  description: Base Go Api for Docker Generator
+  title: Docker Generator Api
+  version: 1.0.0.0
+paths:
+  /authentication/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Credentials'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: login into application
+      tags:
+      - Authentification
+  /authentication/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: logout of application
+      tags:
+      - Authentification
+  /docker-compose:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: docker compose field
+        in: body
+        name: docker-compose
+        required: true
+        schema:
+          $ref: '#/definitions/domain.DockerCompose'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: Save the json needed for docker-compose.yml file
+      tags:
+      - Docker Compose
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: docker compose field
+        in: body
+        name: docker-compose
+        required: true
+        schema:
+          $ref: '#/definitions/domain.DockerCompose'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: update the json needed for docker-compose.yml file
+      tags:
+      - Docker Compose
+  /docker-compose/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: delete the json needed for docker-compose.yml file
+      tags:
+      - Docker Compose
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.DockerCompose'
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: fetch one json needed for docker-compose.yml file
+      tags:
+      - Docker Compose
+  /docker-compose/{id}/version:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Docker Compose file Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.DockerCompose'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: Get all versions of a file
+      tags:
+      - Version
+  /docker-compose/{id}/version/{versionId}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Version id
+        in: path
+        name: versionId
+        required: true
+        type: integer
+      - description: Docker Compose file Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.DockerCompose'
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: Get file with different version
+      tags:
+      - Version
+  /docker-compose/get-all/{fromItem}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: from Item
+        in: path
+        name: fromItem
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.AllDockerComposeDTO'
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: fetch all json needed for docker-compose.yml file
+      tags:
+      - Docker Compose
+  /dockerHub/images/{image}/{tag}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Docker hub image
+        in: path
+        name: image
+        required: true
+        type: string
+      - description: Docker hub tag
+        in: path
+        name: tag
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.DockerHubResult'
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: returns a docker image from docker hub or redis
+      tags:
+      - Docker Hub
+  /user:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: delete his own profile
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: Fetch his own profile
+      tags:
+      - User
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Bearer Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: update his own profile
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            type: object
+      summary: Create a User
+      tags:
+      - User
+securityDefinitions:
+  JWT-Auth:
+    type: basic
+swagger: "2.0"

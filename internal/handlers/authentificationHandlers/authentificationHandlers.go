@@ -18,6 +18,15 @@ func New(authentificationWithJWTService ports.AuthentificationWithJWTService) *H
 	}
 }
 
+// Login
+// @Summary login into application
+// @Tags Authentification
+// @Accept  json
+// @Produce json
+// @Param credentials  body  domain.Credentials  true  "Credentials"
+// @Success      201  {object}  string
+// @Failure      404  {object}  object
+// @Router /authentication/login [post]
 func (h HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var creds domain.Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
@@ -38,6 +47,15 @@ func (h HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(token.Data))
 }
 
+// Logout
+// @Summary logout of application
+// @Tags Authentification
+// @Accept  json
+// @Produce json
+// @Param token  header  string  true  "Bearer Token"
+// @Sucess      201  {object}  object
+// @Failure      404  {object}  object
+// @Router /authentication/logout [post]
 func (h HTTPHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 

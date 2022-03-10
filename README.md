@@ -44,3 +44,9 @@ Les handlers transforme les inputs en appelle a un service
 Les repository envois les models traité par un service du "Core" vers un module extérieur comme par exemple une base de données
 
 [Tuto](https://medium.com/@matiasvarela/hexagonal-architecture-in-go-cfd4e436faa3)
+
+# Swagger
+
+Installer swag  
+Pour regénérer la doc de swagger éxécuter : `swag init -g "cmd/httpserver/main.go"`  
+L'url pour voir la documentation API : http://localhost:8080/swagger/index.html
