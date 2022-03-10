@@ -21,6 +21,17 @@ func NewVersionHTTPHandler(versionService ports.VersionService) *versionHTTPHand
 	}
 }
 
+// FindOneVersion
+// @Summary Get file with different version
+// @Tags Version
+// @Param token  header  string  true  "Bearer Token"
+// @Param versionId   path      int  true  "Version id"
+// @Param id   path      int  true  "Docker Compose file Id"
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} domain.DockerCompose
+// @Failure 404 {object} object
+// @Router /docker-compose/{id}/version/{versionId} [get]
 func (handler versionHTTPHandler) FindOneVersion(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	versionId := chi.URLParam(r, "versionId")
@@ -47,6 +58,16 @@ func (handler versionHTTPHandler) FindOneVersion(w http.ResponseWriter, r *http.
 	w.Write(result)
 }
 
+// FindAllVersion
+//@Summary Get all versions of a file
+//@Tags Version
+// @Param token  header  string  true  "Bearer Token"
+// @Param id path int true "Docker Compose file Id"
+// @Accept  json
+// @Produce json
+// @Success      200  {array}  domain.DockerCompose
+// @Failure      404  {object}  object
+// @Router /docker-compose/{id}/version [get]
 func (handler versionHTTPHandler) FindAllVersion(w http.ResponseWriter, r *http.Request) {
 	idDockerCompose := chi.URLParam(r, "id")
 	_, claims, _ := jwtauth.FromContext(r.Context())

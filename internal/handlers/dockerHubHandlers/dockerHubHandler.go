@@ -17,6 +17,16 @@ func NewHTTPHandler(dockerHubService ports.DockerHubService) *HTTPHandler {
 	}
 }
 
+// Get
+// @Summary  returns a docker image from docker hub or redis
+// @Tags Docker Hub
+// @Param image   path      string  true  "Docker hub image"
+// @Param tag   path      string  false  "Docker hub tag"
+// @Accept  json
+// @Produce json
+// @Success      200  {object}  domain.DockerHubResult
+// @Failure      404  {object}  object
+// @Router /dockerHub/images/{image}/{tag} [get]
 func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 	image := chi.URLParam(r, "image")
 	tag := chi.URLParam(r, "*")

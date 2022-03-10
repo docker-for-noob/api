@@ -22,6 +22,16 @@ func NewDockerComposeHTTPHandler(dockerComposeService ports.DockerComposeService
 	}
 }
 
+// SaveDockerCompose
+// @Summary Save the json needed for docker-compose.yml file
+// @Param token  header  string  true  "Bearer Token"
+// @Tags Docker Compose
+// @Accept  json
+// @Produce json
+// @Param docker-compose  body  domain.DockerCompose  true  "docker compose field"
+// @Success      201  {object}  object
+// @Failure      404  {object}  object
+// @Router /docker-compose [post]
 func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter, r *http.Request) {
 
 	dockerCompose := &domain.DockerCompose{}
@@ -47,6 +57,16 @@ func (handler dockerComposeHTTPHandler) SaveDockerCompose(w http.ResponseWriter,
 	w.WriteHeader(http.StatusCreated)
 }
 
+// UpdateDockerCompose
+// @Summary update the json needed for docker-compose.yml file
+// @Param token  header  string  true  "Bearer Token"
+// @Tags Docker Compose
+// @Accept  json
+// @Produce json
+// @Param docker-compose  body  domain.DockerCompose  true  "docker compose field"
+// @Success      204  {object}  object
+// @Failure      404  {object}  object
+// @Router /docker-compose [put]
 func (handler dockerComposeHTTPHandler) UpdateDockerCompose(w http.ResponseWriter, r *http.Request) {
 	dockerCompose := &domain.DockerCompose{}
 	err := json.NewDecoder(r.Body).Decode(dockerCompose)
@@ -71,6 +91,16 @@ func (handler dockerComposeHTTPHandler) UpdateDockerCompose(w http.ResponseWrite
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// DeleteDockerCompose
+// @Summary delete the json needed for docker-compose.yml file
+// @Tags Docker Compose
+// @Param token  header  string  true  "Bearer Token"
+// @Param id  path  string  true  "ID"
+// @Accept  json
+// @Produce json
+// @Success      204  {object}  object
+// @Failure      404  {object}  object
+// @Router /docker-compose/{id} [delete]
 func (handler dockerComposeHTTPHandler) DeleteDockerCompose(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
@@ -90,6 +120,16 @@ func (handler dockerComposeHTTPHandler) DeleteDockerCompose(w http.ResponseWrite
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// FindOneDockerCompose
+// @Summary fetch one json needed for docker-compose.yml file
+// @Tags Docker Compose
+// @Param token  header  string  true  "Bearer Token"
+// @Param id  path  string  true  "ID"
+// @Accept  json
+// @Produce json
+// @Success      200  {object}  domain.DockerCompose
+// @Failure      404  {object}  object
+// @Router /docker-compose/{id} [get]
 func (handler dockerComposeHTTPHandler) FindOneDockerCompose(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
@@ -115,6 +155,16 @@ func (handler dockerComposeHTTPHandler) FindOneDockerCompose(w http.ResponseWrit
 	w.Write(result)
 }
 
+// FindAllDockerCompose
+// @Summary fetch all json needed for docker-compose.yml file
+// @Tags Docker Compose
+// @Param token  header  string  true  "Bearer Token"
+// @Param fromItem  path  string  true  "from Item"
+// @Accept  json
+// @Produce json
+// @Success      200  {object}  domain.AllDockerComposeDTO
+// @Failure      404  {object}  object
+// @Router /docker-compose/get-all/{fromItem} [get]
 func (handler dockerComposeHTTPHandler) FindAllDockerCompose(w http.ResponseWriter, r *http.Request) {
 	fromItemString := chi.URLParam(r, "fromItem")
 	fromItem, err := strconv.Atoi(fromItemString)
@@ -131,12 +181,9 @@ func (handler dockerComposeHTTPHandler) FindAllDockerCompose(w http.ResponseWrit
 		return
 	}
 
-	resultDatas := struct {
-		LastItem int
-		Datas    []domain.DockerCompose
-	}{
-		lastItem,
-		dockerComposeList,
+	resultDatas := domain.AllDockerComposeDTO{
+		LastItem: lastItem,
+		Datas:    dockerComposeList,
 	}
 
 	result, err := json.Marshal(resultDatas)
