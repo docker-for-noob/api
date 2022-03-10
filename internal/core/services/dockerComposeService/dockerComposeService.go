@@ -49,7 +49,7 @@ func (srv *dockerComposeService) Post(dockerCompose domain.DockerCompose, userId
 
 	dockerComposeId := srv.uuidGenerator.NewUuid()
 
-	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose, dockerComposeId,userId)
+	dockerComposeResult, err := srv.dockerComposeRepository.Create(dockerCompose, userId, dockerComposeId)
 
 	if err != nil {
 		return domain.DockerCompose{}, errors.New(apperrors.Internal, err, "An internal error occurred", "")
