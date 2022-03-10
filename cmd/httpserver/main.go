@@ -15,7 +15,7 @@ import (
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
 	"github.com/docker-generator/api/pkg/uidgen"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
@@ -69,7 +69,7 @@ func main() {
 		publicRouter.Post("/user", userHandler.Post)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
 		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
-		publicRouter.Get("/swagger", httpSwagger.Handler(
+		publicRouter.Get("/swagger/*", httpSwagger.Handler(
 			httpSwagger.URL(":8080/swagger/doc.json"), //The url pointing to API definition
 		))
 	})
