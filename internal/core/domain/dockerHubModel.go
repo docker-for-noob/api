@@ -13,6 +13,6 @@ type DockerHubTags struct {
 }
 
 type DockerHubResult struct {
-	Name string
-	Tags []string
+	Name    string
+	Tags    []string
 }
