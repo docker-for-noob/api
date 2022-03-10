@@ -12,11 +12,11 @@ import (
 	"github.com/docker-generator/api/internal/handlers/authentificationHandlers"
 	"github.com/docker-generator/api/internal/handlers/dockerHubHandlers"
 	"github.com/docker-generator/api/internal/handlers/userHandlers"
-	Middleware "github.com/docker-generator/api/internal/middleware"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/docker-generator/api/pkg/JwtHelpers"
 	"github.com/docker-generator/api/pkg/uidgen"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
@@ -65,7 +65,12 @@ func main() {
 	dockerHubHandler := dockerHubHandlers.NewHTTPHandler(dockerHubServiceInstanciated)
 
 	router := chi.NewRouter()
-	router.Use(Middleware.CORSMiddleware)
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://app.hetic.camillearsac.fr"}, 
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	}))
 
 	router.Group(func(publicRouter chi.Router) {
 		publicRouter.Post("/user", userHandler.Post)

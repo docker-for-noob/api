@@ -54,7 +54,6 @@ func (handler versionHTTPHandler) FindOneVersion(w http.ResponseWriter, r *http.
 	}
 
 	w.Header().Set("content-type", "application/json;charset=UTF-8")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(result)
 }
