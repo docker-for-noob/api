@@ -8,7 +8,7 @@ import (
 
 func GetClient(ctx context.Context) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // use default Addr
+		Addr:     goDotEnv.GetEnvVariable("REDIS_URL"),
 		Password: "",               // no password set
 		DB:       0,                // use default DB
 	})
