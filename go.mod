@@ -16,7 +16,7 @@ require (
 	github.com/matiasvarela/errors v1.3.0
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/http-swagger v1.2.5
+	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.8.0
 	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
 )
