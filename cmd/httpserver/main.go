@@ -66,13 +66,16 @@ func main() {
 
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://app.hetic.camillearsac.fr"}, 
+		AllowedOrigins:   []string{"https://app.hetic.camillearsac.fr"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	}))
 
 	router.Group(func(publicRouter chi.Router) {
+		publicRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
+			fmt.Println("toto")
+		})
 		publicRouter.Post("/user", userHandler.Post)
 		publicRouter.Post("/authentication/login", authentificationHandler.Login)
 		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
