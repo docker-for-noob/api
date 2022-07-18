@@ -16,7 +16,7 @@ services:
     restart: always
     environment:
         MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: password
+        MONGO_INITDB_ROOT_PASSWORD: example
   mongo-express:
     image: mongo-express
     restart: always
