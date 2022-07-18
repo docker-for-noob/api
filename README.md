@@ -25,7 +25,8 @@ docker-compose up -d
 ```
 
 Url pour accéder à l'API : http://localhost:8080/ <br>
-Url pour accéder à mongo-express : http://localhost:8081/
+Url pour accéder à mongo-express : http://localhost:8081/ <br>
+Url pour accéder à Swagger : http://localhost:8080/swagger/
 
 
 ### **Pour arrêter le docker du projet**
