@@ -31,9 +31,7 @@ func (repository *imageReferenceRepository) Read(imageName string) (domain.Image
 		}
 	}()
 
-	coll := client.Database("reference").Collection("reference")
-
-
+	coll := client.Database("docker-for-noob").Collection("reference")
 
 	var result bson.M
 
