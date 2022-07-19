@@ -4,6 +4,7 @@ import (
 	"fmt"
 	_ "github.com/docker-generator/api/docs"
 	"github.com/docker-generator/api/internal/core/services/dockerHubService"
+	"github.com/docker-generator/api/internal/core/services/imageReferenceService"
 	"github.com/docker-generator/api/internal/handlers/dockerHubHandlers"
 	"github.com/docker-generator/api/internal/handlers/imageReferenceHandler"
 	"github.com/docker-generator/api/internal/repositories"
@@ -25,11 +26,15 @@ func main() {
 
 	dockerHubHandler := dockerHubHandlers.NewHTTPHandler(dockerHubServiceInstanciated)
 
-	referenceHandler := imageReferenceHandler.NewImageReferenceHandler()
+	imageReferenceRepositoryInstanciated := repositories.NewImageReferenceRepository()
+
+	imageReferencialServiceinstanciated := imageReferenceService.New(imageReferenceRepositoryInstanciated)
+
+	referenceHandler := imageReferenceHandler.NewImageReferenceHandler(imageReferencialServiceinstanciated)
 
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://app.hetic.camillearsac.fr"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,

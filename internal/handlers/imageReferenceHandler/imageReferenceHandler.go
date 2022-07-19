@@ -2,49 +2,51 @@ package imageReferenceHandler
 
 import (
 	"encoding/json"
-	"github.com/docker-generator/api/internal/core/domain"
+	"github.com/docker-generator/api/internal/core/ports"
+	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
+	"github.com/matiasvarela/errors"
 	"net/http"
 )
 
-type imageReferenceHandler struct {}
+type imageReferenceHandler struct {
+	imageReferenceService ports.ImageReferenceService
+}
 
-func NewImageReferenceHandler() *imageReferenceHandler {
-	return &imageReferenceHandler{}
+func NewImageReferenceHandler(imageReferenceService ports.ImageReferenceService) *imageReferenceHandler {
+	return &imageReferenceHandler{
+		imageReferenceService: imageReferenceService,
+	}
 }
 
 // Get
-// @Summary  returns a docker image from docker hub or redis
+// @Summary  returns a reference docker image
 // @Tags Docker Hub
 // @Param image   path      string  true  "Docker hub image"
-// @Param tag   path      string  false  "Docker hub tag"
 // @Accept  json
 // @Produce json
-// @Success      200  {object}  domain.DockerHubResult
+// @Success      200  {object}  domain.ImageReference
 // @Failure      404  {object}  object
 // @Router /dockerHub/images/{image}/{tag} [get]
 func (h imageReferenceHandler) Get(w http.ResponseWriter, r *http.Request) {
 	image := chi.URLParam(r, "image")
-
 
 	if len(image) == 0 {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	resp := domain.ImageReference{}
+	resp, executionError := h.imageReferenceService.Get(image)
 
-	respEnv := domain.EnvVar{}
+	if executionError != nil {
+		if errors.Is(executionError, apperrors.NotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	respEnv.Key = "MYSQL_ROOT_PASSWORD"
-	respEnv.Desc = "This variable is mandatory and specifies the password that will be set for the MySQL root superuser account. In the above example, it was set to my-secret-pw."
-
-	resp.Id = uuid.New()
-	resp.Name = "go:latest"
-	resp.Port = []string{"8080"}
-	resp.Workdir = []string{"path/to/file"}
-	resp.Env = []domain.EnvVar{respEnv}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	result, err := json.Marshal(resp)
 	if err != nil {

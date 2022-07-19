@@ -4,6 +4,7 @@ import (
 	mock_ports "github.com/docker-generator/api/Mocks"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/services/imageReferenceService"
+	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/golang/mock/gomock"
 	"github.com/matiasvarela/errors"
 	"github.com/stretchr/testify/assert"
@@ -14,10 +15,10 @@ type mockers struct {
 	imageReferenceRepository *mock_ports.MockImageReferenceRepository
 }
 
-func TestGetImageRequest(t *testing.T) {
+func TestGetImageReferenceRequest(t *testing.T) {
 
 	//Mocks//
-	sampleImageReference := domain.ImageReference{Name: "php", Workdir: []string{"buster", "zt-sbuster"}}
+	sampleImageReference := domain.ImageReference{Name: "go:latest",Port : []string{"8080"},  Workdir: []string{"path/to/file"}}
 
 	//Tests//
 
@@ -38,11 +39,33 @@ func TestGetImageRequest(t *testing.T) {
 		mocks func(m mockers)
 	}{
 		{
-			name: "Should get image successfully",
-			args: args{image: "node", tag: "latest"},
+			name: "Should get reference successfully",
+			args: args{image: "go:latest"},
 			want: want{result: sampleImageReference},
 			mocks: func(m mockers) {
-				m.imageReferenceRepository.EXPECT().Read("node").Return(sampleImageReference, nil)
+				m.imageReferenceRepository.EXPECT().Read("go:latest").Return(sampleImageReference, nil)
+			},
+		},
+		{
+			name: "Should return a NotFound error",
+			args: args{image: "go:dernier"},
+			want: want{result: domain.ImageReference{},
+				err: errors.New(
+					apperrors.NotFound,
+					nil,
+					"Not found",
+					"",
+				)},
+			mocks: func(m mockers) {
+				m.imageReferenceRepository.EXPECT().Read("go:dernier").Return(domain.ImageReference{}, nil)
+			},
+		},
+		{
+			name: "Should return a internal error",
+			args: args{image: "go:dernier"},
+			want: want{err: errors.New(apperrors.Internal, nil, "An internal error occured while searching the reference", "")},
+			mocks: func(m mockers) {
+				m.imageReferenceRepository.EXPECT().Read("go:dernier").Return(domain.ImageReference{}, errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}
