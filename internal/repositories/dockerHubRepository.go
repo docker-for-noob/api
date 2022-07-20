@@ -19,8 +19,12 @@ func NewDockerHubApi() *dockerHubApi {
 func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult, error) {
 	ctx := context.Background()
 
-	rdb, _ := GetClient(ctx)
+	rdb, err := GetClient(ctx)
 	length := rdb.LLen(ctx, image+"-"+tag).Val()
+
+	if err != nil {
+		panic(err)
+	}
 
 	var dockerHubTags []string
 	if length > 0 {
@@ -59,8 +63,8 @@ func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult
 	}
 
 	dockerHubResult := domain.DockerHubResult{
-		Name:    image,
-		Tags:    dockerHubTags,
+		Name: image,
+		Tags: dockerHubTags,
 	}
 	return dockerHubResult, nil
 }
