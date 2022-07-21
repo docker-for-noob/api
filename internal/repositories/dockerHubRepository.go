@@ -3,64 +3,83 @@ package repositories
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
+	"github.com/go-redis/redis/v8"
 	"github.com/m7shapan/njson"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
-type dockerHubApi struct{}
-
-func NewDockerHubApi() *dockerHubApi {
-	return &dockerHubApi{}
+type dockerHubRepository struct {
+	ctx context.Context
+	rdb *redis.Client
 }
 
-func (repo *dockerHubApi) Read(image string, tag string) (domain.DockerHubResult, error) {
+func NewDockerHubRepository() *dockerHubRepository {
 	ctx := context.Background()
+	rdb, _ := GetRedisClient(ctx)
+	return &dockerHubRepository{rdb: rdb, ctx: ctx}
+}
 
-	rdb, _ := GetClient(ctx)
-	length := rdb.LLen(ctx, image+"-"+tag).Val()
-
+func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
 	var dockerHubTags []string
-	if length > 0 {
-		dockerHubTags = rdb.LRange(ctx, image+"-"+tag, 0, -1).Val()
-	} else {
-		resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag)
 
-		if err != nil {
+	// TODO : Boucle sur toutes les pages
+	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag + "&page_size=100")
+
+	if resp.StatusCode == 403 {
+		DockerImageResult := domain.DockerImageResult{}
+		return DockerImageResult, nil
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jsonDataFromHttp, err := io.ReadAll(resp.Body)
+
+	var dockerHubImage domain.DockerHubImage
+
+	fmt.Println(len(dockerHubImage.Results))
+
+	err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err != nil {
+		return domain.DockerImageResult{}, err
+	}
+
+	for _, data := range dockerHubImage.Results {
+		var finalData domain.DockerHubTags
+		errormessage := njson.Unmarshal([]byte(data), &finalData)
+
+		if errormessage != nil {
 			log.Fatal(err)
 		}
 
-		jsonDataFromHttp, err := ioutil.ReadAll(resp.Body)
+		encoded, _ := json.Marshal(finalData.Tag)
 
-		var dockerHubImage domain.DockerHubImage
+		repo.rdb.RPush(repo.ctx, image+"-"+tag, encoded)
 
-		err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, data := range dockerHubImage.Results {
-			var finalData domain.DockerHubTags
-			errormessage := njson.Unmarshal([]byte(data), &finalData)
-
-			if errormessage != nil {
-				log.Fatal(err)
-			}
-
-			encoded, _ := json.Marshal(finalData.Tag)
-
-			rdb.RPush(ctx, image+"-"+tag, encoded)
-
-			dockerHubTags = append(dockerHubTags, string(encoded))
-		}
+		dockerHubTags = append(dockerHubTags, string(encoded))
 	}
 
-	dockerHubResult := domain.DockerHubResult{
-		Name:    image,
-		Tags:    dockerHubTags,
+	if len(dockerHubTags) == 0 {
+		DockerImageResult := domain.DockerImageResult{
+			Name: image,
+			Tags: dockerHubTags,
+		}
+		return DockerImageResult, nil
 	}
-	return dockerHubResult, nil
+
+	DockerImageResult := domain.DockerImageResult{
+		Name: image,
+		Tags: dockerHubTags,
+	}
+	return DockerImageResult, nil
 }

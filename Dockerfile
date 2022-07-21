@@ -1,37 +1,29 @@
-#----------------------------------------------------------------
-# DEVELOPMENT 
-#----------------------------------------------------------------
-
-FROM golang:1.17 AS dev
+FROM golang:1.17
 
 EXPOSE 8080
 
 WORKDIR /go/src/api
 
-# ----- INSTALL -----
-
 ENV GO111MODULE=on
 
-RUN go mod init
 
-COPY go.mod .
+RUN go mod init api
 
-# Add missing & remove unused modules
+COPY go.mod ./
 
 RUN go mod tidy
 
-COPY go.sum .
-
-# Download all dependencies
+COPY go.sum ./
 RUN go mod download -x
 
-# ----- COPY + RUN -----
 
-# Copy the source from the current directory to the container
 COPY . ./
 
-# Install 'air' live-reload go module
+## Install 'air' live-reload go module
 RUN go get -u github.com/cosmtrek/air
 
-# Use the excutable
+RUN go mod vendor
+
+
+## Use the executable
 ENTRYPOINT ["/go/bin/air", "-c", ".config/air.toml"]
