@@ -71,6 +71,3 @@ spec:
           - name: "mongo-data-dir"
             persistentVolumeClaim:
               claimName: "pvc"
-
-
-
