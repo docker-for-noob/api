@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/pkg/goDotEnv"
 	"github.com/go-redis/redis/v8"
@@ -27,7 +26,7 @@ func GetClient(ctx context.Context) (*redis.Client, error) {
 
 func (repo *redisRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
 	ctx := context.Background()
-	rdb, _ := GetRedisClient(ctx)
+	rdb, _ := repo.GetRedisClient(ctx)
 
 	var dockerHubTags []string
 
@@ -42,33 +41,16 @@ func (repo *redisRepository) Read(image string, tag string) (domain.DockerImageR
 
 }
 
-func (repo *redisRepository) AddImage(dockerHubImage domain.DockerHubImage) {
-	fmt.Println(dockerHubImage.Results)
-	//ctx := context.Background()
-	//rdb, _ := GetRedisClient(ctx)
-
-	//var dockerHubTags []string
-	//
-	//for _, data := range dockerHubImage.Results {
-	//	var finalData domain.DockerHubTags
-	//	errormessage := njson.Unmarshal([]byte(data), &finalData)
-	//
-	//	if errormessage != nil {
-	//		log.Fatal(err)
-	//	}
-	//
-	//	encoded, _ := json.Marshal(finalData.Tag)
-	//
-	//	rdb.RPush(ctx, image+"-"+tag, encoded)
-	//
-	//	dockerHubTags = append(dockerHubTags, string(encoded))
-	//}
+func (repo *redisRepository) AddImage(image string, tag string, encoded []byte) {
+	ctx := context.Background()
+	rdb, _ := repo.GetRedisClient(ctx)
+	rdb.RPush(ctx, image+"-"+tag, encoded)
 }
 
 func (repo *redisRepository) ImageExist(image string, tag string) bool {
 	ctx := context.Background()
 
-	rdb, err := GetRedisClient(ctx)
+	rdb, err := repo.GetRedisClient(ctx)
 
 	if err != nil {
 		panic(err)

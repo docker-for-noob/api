@@ -36,7 +36,13 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 	}
 
 	ctx := context.Background()
-	rdb, _ := GetRedisClient(ctx)
+	redisRepository := NewRedisRepository()
+	_, err = redisRepository.GetRedisClient(ctx)
+
+	if err != nil {
+		return domain.DockerImageResult{}, err
+	}
+
 	for _, data := range dockerHubImage.Results {
 		var finalData domain.DockerHubTags
 		errormessage := njson.Unmarshal([]byte(data), &finalData)
@@ -47,7 +53,7 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 		encoded, _ := json.Marshal(finalData.Tag)
 
-		rdb.RPush(ctx, image+"-"+tag, encoded)
+		redisRepository.AddImage(image, tag, encoded)
 
 		dockerHubTags = append(dockerHubTags, string(encoded))
 	}
