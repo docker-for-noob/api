@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/docker-generator/api/internal/core/domain"
+	"github.com/go-redis/redis/v8"
 	"github.com/m7shapan/njson"
 	"io/ioutil"
 	"log"
@@ -16,7 +17,7 @@ func NewDockerHubRepository() *dockerHubRepository {
 	return &dockerHubRepository{}
 }
 
-func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
+func (repo *dockerHubRepository) Read(rdb *redis.Client, image string, tag string) (domain.DockerImageResult, error) {
 	var dockerHubTags []string
 
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag)
@@ -36,8 +37,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 	}
 
 	ctx := context.Background()
-	redisRepository := NewRedisRepository()
-	_, err = redisRepository.GetRedisClient(ctx)
 
 	if err != nil {
 		return domain.DockerImageResult{}, err
@@ -53,7 +52,7 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 		encoded, _ := json.Marshal(finalData.Tag)
 
-		redisRepository.AddImage(image, tag, encoded)
+		rdb.RPush(ctx, image+"-"+tag, encoded)
 
 		dockerHubTags = append(dockerHubTags, string(encoded))
 	}

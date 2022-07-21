@@ -24,9 +24,8 @@ func GetClient(ctx context.Context) (*redis.Client, error) {
 	return rdb, err
 }
 
-func (repo *redisRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
+func (repo *redisRepository) Read(rdb *redis.Client, image string, tag string) (domain.DockerImageResult, error) {
 	ctx := context.Background()
-	rdb, _ := repo.GetRedisClient(ctx)
 
 	var dockerHubTags []string
 
@@ -41,20 +40,8 @@ func (repo *redisRepository) Read(image string, tag string) (domain.DockerImageR
 
 }
 
-func (repo *redisRepository) AddImage(image string, tag string, encoded []byte) {
+func (repo *redisRepository) ImageExist(rdb *redis.Client, image string, tag string) bool {
 	ctx := context.Background()
-	rdb, _ := repo.GetRedisClient(ctx)
-	rdb.RPush(ctx, image+"-"+tag, encoded)
-}
-
-func (repo *redisRepository) ImageExist(image string, tag string) bool {
-	ctx := context.Background()
-
-	rdb, err := repo.GetRedisClient(ctx)
-
-	if err != nil {
-		panic(err)
-	}
 
 	length := rdb.LLen(ctx, image+"-"+tag).Val()
 
