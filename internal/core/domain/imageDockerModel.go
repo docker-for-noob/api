@@ -12,7 +12,7 @@ type DockerHubTags struct {
 	Tag string `njson:"name"`
 }
 
-type DockerHubResult struct {
-	Name    string
-	Tags    []string
+type DockerImageResult struct {
+	Name string
+	Tags []string
 }

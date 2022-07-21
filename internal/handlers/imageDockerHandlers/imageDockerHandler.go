@@ -1,4 +1,4 @@
-package dockerHubHandlers
+package imageDockerHandlers
 
 import (
 	"encoding/json"
@@ -8,12 +8,12 @@ import (
 )
 
 type HTTPHandler struct {
-	dockerHubService ports.DockerHubService
+	imageDockerService ports.ImageDockerService
 }
 
-func NewHTTPHandler(dockerHubService ports.DockerHubService) *HTTPHandler {
+func NewHTTPHandler(imageDockerService ports.ImageDockerService) *HTTPHandler {
 	return &HTTPHandler{
-		dockerHubService: dockerHubService,
+		imageDockerService: imageDockerService,
 	}
 }
 
@@ -24,17 +24,29 @@ func NewHTTPHandler(dockerHubService ports.DockerHubService) *HTTPHandler {
 // @Param tag   path      string  false  "Docker hub tag"
 // @Accept  json
 // @Produce json
-// @Success      200  {object}  domain.DockerHubResult
+// @Success      200  {object}  domain.DockerImageResult
 // @Failure      404  {object}  object
 // @Router /dockerHub/images/{image}/{tag} [get]
 func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 	image := chi.URLParam(r, "image")
 	tag := chi.URLParam(r, "*")
 
-	resp, err := h.dockerHubService.Get(image, tag)
+	resp, err := h.imageDockerService.Get(image, tag)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if resp.Name == "" {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Image doesn't exist"))
+		return
+	}
+
+	if resp.Name != "" && resp.Tags == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Tag doesn't exist"))
 		return
 	}
 
