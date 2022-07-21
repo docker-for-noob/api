@@ -14,17 +14,6 @@ func NewRedisRepository() *redisRepository {
 	return &redisRepository{}
 }
 
-func (repo *redisRepository) GetRedisClient(ctx context.Context) (*redis.Client, error) {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     goDotEnv.GetEnvVariable("REDIS_URL"),
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-
-	_, err := rdb.Ping(ctx).Result()
-	return rdb, err
-}
-
 func GetClient(ctx context.Context) (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     goDotEnv.GetEnvVariable("REDIS_URL"),
