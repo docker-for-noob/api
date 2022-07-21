@@ -1,0 +1,22 @@
+
+FROM golang:1.17
+
+WORKDIR /go/src/api
+
+# Download necessary Go modules
+
+ENV GO111MODULE=on
+
+COPY go.mod .
+
+# Copy over the source files
+COPY . .
+
+RUN mv /go/src/api/.env.dist /go/src/api/.env
+
+RUN go mod vendor
+
+RUN go mod download
+
+
+CMD [ "go", "run", "github.com/api/cmd/httpserver"]
