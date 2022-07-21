@@ -7,10 +7,15 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-type redisRepository struct{}
+type redisRepository struct {
+	ctx context.Context
+	rdb *redis.Client
+}
 
 func NewRedisRepository() *redisRepository {
-	return &redisRepository{}
+	ctx := context.Background()
+	rdb, _ := GetRedisClient(ctx)
+	return &redisRepository{rdb: rdb, ctx: ctx}
 }
 
 func GetClient(ctx context.Context) (*redis.Client, error) {
@@ -24,12 +29,10 @@ func GetClient(ctx context.Context) (*redis.Client, error) {
 	return rdb, err
 }
 
-func (repo *redisRepository) Read(rdb *redis.Client, image string, tag string) (domain.DockerImageResult, error) {
-	ctx := context.Background()
-
+func (repo *redisRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
 	var dockerHubTags []string
 
-	dockerHubTags = rdb.LRange(ctx, image+"-"+tag, 0, -1).Val()
+	dockerHubTags = repo.rdb.LRange(repo.ctx, image+"-"+tag, 0, -1).Val()
 
 	DockerImageResult := domain.DockerImageResult{
 		Name: image,
@@ -40,10 +43,8 @@ func (repo *redisRepository) Read(rdb *redis.Client, image string, tag string) (
 
 }
 
-func (repo *redisRepository) ImageExist(rdb *redis.Client, image string, tag string) bool {
-	ctx := context.Background()
-
-	length := rdb.LLen(ctx, image+"-"+tag).Val()
+func (repo *redisRepository) ImageExist(image string, tag string) bool {
+	length := repo.rdb.LLen(repo.ctx, image+"-"+tag).Val()
 
 	return length > 0
 }

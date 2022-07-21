@@ -3,32 +3,47 @@ package repositories
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/go-redis/redis/v8"
 	"github.com/m7shapan/njson"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
-type dockerHubRepository struct{}
-
-func NewDockerHubRepository() *dockerHubRepository {
-	return &dockerHubRepository{}
+type dockerHubRepository struct {
+	ctx context.Context
+	rdb *redis.Client
 }
 
-func (repo *dockerHubRepository) Read(rdb *redis.Client, image string, tag string) (domain.DockerImageResult, error) {
+func NewDockerHubRepository() *dockerHubRepository {
+	ctx := context.Background()
+	rdb, _ := GetRedisClient(ctx)
+	return &dockerHubRepository{rdb: rdb, ctx: ctx}
+}
+
+func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
 	var dockerHubTags []string
 
-	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag)
+	// TODO : Boucle sur toutes les pages
+	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag + "&page_size=100")
+
+	if resp.StatusCode == 403 {
+		DockerImageResult := domain.DockerImageResult{}
+		return DockerImageResult, nil
+	}
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	jsonDataFromHttp, err := ioutil.ReadAll(resp.Body)
+	jsonDataFromHttp, err := io.ReadAll(resp.Body)
 
+	//fmt.Println(string(jsonDataFromHttp))
 	var dockerHubImage domain.DockerHubImage
+
+	fmt.Println(len(dockerHubImage.Results))
 
 	err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
 
@@ -36,11 +51,14 @@ func (repo *dockerHubRepository) Read(rdb *redis.Client, image string, tag strin
 		log.Fatal(err)
 	}
 
-	ctx := context.Background()
-
 	if err != nil {
 		return domain.DockerImageResult{}, err
 	}
+	//
+	//fmt.Println(jsonDataFromHttp)
+	//fmt.Println(jsonDataFromHttp)
+	//fmt.Println(len(dockerHubImage.Results))
+	panic("test")
 
 	for _, data := range dockerHubImage.Results {
 		var finalData domain.DockerHubTags
@@ -52,9 +70,17 @@ func (repo *dockerHubRepository) Read(rdb *redis.Client, image string, tag strin
 
 		encoded, _ := json.Marshal(finalData.Tag)
 
-		rdb.RPush(ctx, image+"-"+tag, encoded)
+		repo.rdb.RPush(repo.ctx, image+"-"+tag, encoded)
 
 		dockerHubTags = append(dockerHubTags, string(encoded))
+	}
+
+	if len(dockerHubTags) == 0 {
+		DockerImageResult := domain.DockerImageResult{
+			Name: image,
+			Tags: dockerHubTags,
+		}
+		return DockerImageResult, nil
 	}
 
 	DockerImageResult := domain.DockerImageResult{

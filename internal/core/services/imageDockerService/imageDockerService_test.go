@@ -4,7 +4,6 @@ import (
 	mock_ports "github.com/docker-generator/api/Mocks"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/services/imageDockerService"
-	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/golang/mock/gomock"
 	"github.com/matiasvarela/errors"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +18,7 @@ type mockers struct {
 func TestGetImageRequest(t *testing.T) {
 
 	//Mocks//
-	sampleWantedDockerHub := domain.DockerImageResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
+	sampleWantedDockerImage := domain.DockerImageResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
 
 	//Tests//
 
@@ -40,25 +39,33 @@ func TestGetImageRequest(t *testing.T) {
 		mocks func(m mockers)
 	}{
 		{
-			name: "Should get image successfully",
+			name: "Should get image successfully Redis",
 			args: args{image: "node", tag: "latest"},
-			want: want{result: sampleWantedDockerHub},
+			want: want{result: sampleWantedDockerImage},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("node", "latest").Return(sampleWantedDockerHub, nil)
+				m.redisRepository.EXPECT().ImageExist("node", "latest").Return(true)
+				m.redisRepository.EXPECT().Read("node", "latest").Return(sampleWantedDockerImage, nil)
 			},
 		},
 		{
-			name: "Should return a NotFound error",
-			args: args{image: "noda", tag: "latest"},
-			want: want{result: domain.DockerImageResult{},
-				err: errors.New(
-					apperrors.NotFound,
-					nil,
-					"Not found",
-					"",
-				)},
+			name: "Should get image successfully DockerHub",
+			args: args{image: "node", tag: "latest"},
+			want: want{result: sampleWantedDockerImage},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(domain.DockerImageResult{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.redisRepository.EXPECT().ImageExist("node", "latest").Return(false)
+				m.dockerHubRepository.EXPECT().Read("node", "latest").Return(sampleWantedDockerImage, nil)
+			},
+		},
+		{
+			name: "Should return a NotFound image error",
+			args: args{image: "noda", tag: "latest"},
+			want: want{result: domain.DockerImageResult{
+				Name: "",
+				Tags: nil,
+			}},
+			mocks: func(m mockers) {
+				m.redisRepository.EXPECT().ImageExist("noda", "latest").Return(false)
+				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(domain.DockerImageResult{}, nil)
 			},
 		},
 	}
@@ -70,6 +77,7 @@ func TestGetImageRequest(t *testing.T) {
 
 		m := mockers{
 			dockerHubRepository: mock_ports.NewMockDockerHubRepository(gomock.NewController(t)),
+			redisRepository:     mock_ports.NewMockRedisRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)

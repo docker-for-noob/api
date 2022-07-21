@@ -38,6 +38,18 @@ func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if resp.Name == "" {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Image doesn't exist"))
+		return
+	}
+
+	if resp.Name != "" && resp.Tags == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Tag doesn't exist"))
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	result, err := json.Marshal(resp)
 	if err != nil {
