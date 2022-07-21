@@ -40,7 +40,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 	jsonDataFromHttp, err := io.ReadAll(resp.Body)
 
-	//fmt.Println(string(jsonDataFromHttp))
 	var dockerHubImage domain.DockerHubImage
 
 	fmt.Println(len(dockerHubImage.Results))
@@ -54,11 +53,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 	if err != nil {
 		return domain.DockerImageResult{}, err
 	}
-	//
-	//fmt.Println(jsonDataFromHttp)
-	//fmt.Println(jsonDataFromHttp)
-	//fmt.Println(len(dockerHubImage.Results))
-	panic("test")
 
 	for _, data := range dockerHubImage.Results {
 		var finalData domain.DockerHubTags
