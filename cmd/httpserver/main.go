@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	_ "github.com/docker-generator/api/docs"
-	"github.com/docker-generator/api/internal/core/services/dockerHubService"
+	"github.com/docker-generator/api/internal/core/services/imageDockerService"
 	"github.com/docker-generator/api/internal/core/services/imageReferenceService"
-	"github.com/docker-generator/api/internal/handlers/dockerHubHandlers"
+	"github.com/docker-generator/api/internal/handlers/imageDockerHandlers"
 	"github.com/docker-generator/api/internal/handlers/imageReferenceHandler"
 	"github.com/docker-generator/api/internal/repositories"
 	"github.com/go-chi/chi/v5"
@@ -20,17 +20,19 @@ import (
 
 // @securityDefinitions.basic  JWT-Auth
 func main() {
-	dockerHubRepositoryInstanciated := repositories.NewDockerHubApi()
+	dockerHubRepositoryInstantiated := repositories.NewDockerHubRepository()
 
-	dockerHubServiceInstanciated := dockerHubService.New(dockerHubRepositoryInstanciated)
+	redisRepositoryInstantiated := repositories.NewRedisRepository()
 
-	dockerHubHandler := dockerHubHandlers.NewHTTPHandler(dockerHubServiceInstanciated)
+	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated)
 
-	imageReferenceRepositoryInstanciated := repositories.NewImageReferenceRepository()
+	imageDockerHandler := imageDockerHandlers.NewHTTPHandler(imageDockerServiceInstantiated)
 
-	imageReferencialServiceinstanciated := imageReferenceService.New(imageReferenceRepositoryInstanciated)
+	imageReferenceRepositoryInstantiated := repositories.NewImageReferenceRepository()
 
-	referenceHandler := imageReferenceHandler.NewImageReferenceHandler(imageReferencialServiceinstanciated)
+	imageReferenceServiceInstantiated := imageReferenceService.New(imageReferenceRepositoryInstantiated)
+
+	referenceHandler := imageReferenceHandler.NewImageReferenceHandler(imageReferenceServiceInstantiated)
 
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
@@ -44,7 +46,7 @@ func main() {
 		publicRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 			fmt.Println("toto")
 		})
-		publicRouter.Get("/dockerHub/images/{image}/*", dockerHubHandler.Get)
+		publicRouter.Get("/dockerHub/images/{image}/*", imageDockerHandler.Get)
 		publicRouter.Get("/swagger/*", httpSwagger.Handler(
 			httpSwagger.URL(":8080/swagger/doc.json"), //The url pointing to API definition
 		))

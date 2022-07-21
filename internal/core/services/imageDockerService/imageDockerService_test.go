@@ -1,9 +1,9 @@
-package dockerHubService_test
+package imageDockerService_test
 
 import (
 	mock_ports "github.com/docker-generator/api/Mocks"
 	"github.com/docker-generator/api/internal/core/domain"
-	"github.com/docker-generator/api/internal/core/services/dockerHubService"
+	"github.com/docker-generator/api/internal/core/services/imageDockerService"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/golang/mock/gomock"
 	"github.com/matiasvarela/errors"
@@ -13,12 +13,13 @@ import (
 
 type mockers struct {
 	dockerHubRepository *mock_ports.MockDockerHubRepository
+	redisRepository     *mock_ports.MockRedisRepository
 }
 
 func TestGetImageRequest(t *testing.T) {
 
 	//Mocks//
-	sampleWantedDockerHub := domain.DockerHubResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
+	sampleWantedDockerHub := domain.DockerImageResult{Name: "php", Tags: []string{"buster", "zt-sbuster"}}
 
 	//Tests//
 
@@ -28,7 +29,7 @@ func TestGetImageRequest(t *testing.T) {
 	}
 
 	type want struct {
-		result domain.DockerHubResult
+		result domain.DockerImageResult
 		err    error
 	}
 
@@ -49,7 +50,7 @@ func TestGetImageRequest(t *testing.T) {
 		{
 			name: "Should return a NotFound error",
 			args: args{image: "noda", tag: "latest"},
-			want: want{result: domain.DockerHubResult{},
+			want: want{result: domain.DockerImageResult{},
 				err: errors.New(
 					apperrors.NotFound,
 					nil,
@@ -57,7 +58,7 @@ func TestGetImageRequest(t *testing.T) {
 					"",
 				)},
 			mocks: func(m mockers) {
-				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(domain.DockerHubResult{}, errors.New(apperrors.NotFound, nil, "", ""))
+				m.dockerHubRepository.EXPECT().Read("noda", "latest").Return(domain.DockerImageResult{}, errors.New(apperrors.NotFound, nil, "", ""))
 			},
 		},
 	}
@@ -72,7 +73,7 @@ func TestGetImageRequest(t *testing.T) {
 		}
 
 		tt.mocks(m)
-		service := dockerHubService.New(m.dockerHubRepository)
+		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository)
 
 		result, err := service.Get(tt.args.image, tt.args.tag)
 
