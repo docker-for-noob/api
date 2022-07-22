@@ -23,7 +23,7 @@ spec:
         - name: redis
           image: redislabs/redismod
           ports:
-            - containerPort: "6379:6379"
+            - containerPort: 6379
 
         - image: mongo
           name: mongo
