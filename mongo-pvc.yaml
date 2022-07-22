@@ -6,7 +6,6 @@ spec:
   storageClassName: standard
   accessModes:
     - ReadWriteMany
-  volumeName: pv
   resources:
     requests:
       storage: 1Gi
