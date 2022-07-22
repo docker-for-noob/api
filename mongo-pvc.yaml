@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: standard
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   volumeName: pv
   resources:
     requests:
