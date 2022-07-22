@@ -12,7 +12,7 @@ require (
 	github.com/m7shapan/njson v1.0.7
 	github.com/matiasvarela/errors v1.3.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/http-swagger v1.2.5
+	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.8.0
 	go.mongodb.org/mongo-driver v1.10.0
 )
