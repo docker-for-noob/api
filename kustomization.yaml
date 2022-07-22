@@ -3,5 +3,4 @@ commonLabels:
 resources:
   - deployment.yaml
   - service.yaml
-  - mongo-pv.yaml
   - mongo-pvc.yaml
