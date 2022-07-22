@@ -3,13 +3,13 @@ package repositories
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/go-redis/redis/v8"
 	"github.com/m7shapan/njson"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type dockerHubRepository struct {
@@ -42,8 +42,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 	var dockerHubImage domain.DockerHubImage
 
-	fmt.Println(len(dockerHubImage.Results))
-
 	err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
 
 	if err != nil {
@@ -64,9 +62,9 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 		encoded, _ := json.Marshal(finalData.Tag)
 
-		repo.rdb.RPush(repo.ctx, image+"-"+tag, encoded)
+		repo.rdb.RPush(repo.ctx, image+"-"+tag, strings.Replace(string(encoded), "\"", "", -1))
 
-		dockerHubTags = append(dockerHubTags, string(encoded))
+		dockerHubTags = append(dockerHubTags, strings.Replace(string(encoded), "\"", "", -1))
 	}
 
 	if len(dockerHubTags) == 0 {
