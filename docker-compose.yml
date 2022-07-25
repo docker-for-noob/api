@@ -17,6 +17,10 @@ services:
     environment:
         MONGO_INITDB_ROOT_USERNAME: root
         MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./mongo_db:/data/db
+    ports:
+      - "27017:27017"
   mongo-express:
     image: mongo-express
     restart: always
@@ -28,12 +32,14 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:password@mongo:27017/
   redis:
     image: redislabs/redismod
+    volumes:
+      - ./redis_db:/data
     ports:
       - "6379:6379"
   redisinsight:
     image: redislabs/redisinsight:latest
+    volumes:
+      - ./redis_insight:/db
     ports:
       - '8001:8001'
-    volumes:
-      - ./:/db
 
