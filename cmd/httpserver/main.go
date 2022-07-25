@@ -48,11 +48,11 @@ func main() {
 		})
 		publicRouter.Get("/dockerHub/images/{image}/*", imageDockerHandler.Get)
 		publicRouter.Get("/swagger/*", httpSwagger.Handler(
-			httpSwagger.URL(":8080/swagger/doc.json"), //The url pointing to API definition
+			httpSwagger.URL(":80/swagger/doc.json"), //The url pointing to API definition
 		))
 		publicRouter.Get("/reference/{image}", referenceHandler.Get)
 	})
 
-	err := http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe(":80", router)
 	fmt.Println(err)
 }
