@@ -23,7 +23,7 @@ spec:
         - name: redis
           image: redislabs/redismod
           ports:
-            - containerPort: "6379:6379"
+            - containerPort: 6379
 
         - image: mongo
           name: mongo
@@ -57,7 +57,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mongo-creds
-                  key: root
+                  key: username
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -66,7 +66,8 @@ spec:
           volumeMounts:
             - name: "mongo-data-dir"
               mountPath: "/data/db"
-        volumes:
-          - name: "mongo-data-dir"
-            persistentVolumeClaim:
-              claimName: "pvc"
+      volumes:
+        - name: "mongo-data-dir"
+          persistentVolumeClaim:
+            claimName: "pvc"
+

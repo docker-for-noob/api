@@ -3,3 +3,5 @@ commonLabels:
 resources:
   - deployment.yaml
   - service.yaml
+  - mongo-pvc.yaml
+  - mongo-secret.yaml
