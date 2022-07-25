@@ -22,7 +22,6 @@ spec:
               protocol: TCP
               hostPort: 80
               containerPort: 8080
-
         - name: redis
           image: redislabs/redismod
           ports:
