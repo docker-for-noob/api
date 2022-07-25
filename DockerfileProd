@@ -19,4 +19,4 @@ RUN go mod vendor
 RUN go mod download
 
 
-CMD [ "go", "run", "github.com/api/cmd/httpserver"]
+CMD [ "go", "run", "./cmd/httpserver"]
