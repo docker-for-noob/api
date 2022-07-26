@@ -177,7 +177,6 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 	}(f)
 
 	for _, tagName := range allTag{
-		// DEBUT Bloc gestion du rate limiting de l'api
 		tagReference, err := repo.GetTagReference(image , tagName )
 		if err != nil {
 			time.Sleep(60 * time.Second)
@@ -186,17 +185,12 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 				fmt.Printf("error on %s : %s\n",tagName, err)
 			}
 		}
-
-		// FIN Bloc gestion du rate limiting de l'api
-
 		values := tagReferenceToSlice(tagReference)
 		err = csvwriter.Write(values)
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		csvwriter.Flush()
-
 	}
 
 	return nil

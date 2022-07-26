@@ -6,6 +6,7 @@ import (
 	"github.com/docker-generator/api/internal/core/ports"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/matiasvarela/errors"
+	"log"
 )
 
 type imageReferenceService struct {
@@ -40,42 +41,29 @@ func (srv *imageReferenceService) Get(imageName string) (domain.ImageReference, 
 	return result, nil
 }
 
-func (srv *imageReferenceService) AddAllTagReferenceForALanguage(languageName string) error {
-	//var wg sync.WaitGroup
+func (srv *imageReferenceService) AddAllTagReference(allLanguage []string) error {
+	for _, languageName := range allLanguage {
+		err := srv.FindAllTagReferenceForALanguage(languageName)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	err := srv.imageReferenceRepository.AddAllTagReferenceFromApi()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
-	result, _ := srv.dockerHubRepository.Read(languageName, "") //175 * 1000 ==> 175000
+func (srv *imageReferenceService) FindAllTagReferenceForALanguage(languageName string) error {
+
+	result, _ := srv.dockerHubRepository.Read(languageName, "")
 
 	err := srv.dockerHubRepository.HandleMultipleGetTagReference(languageName, result.Tags)
 	if err != nil {
 		return err
 	}
 
-	// lenght total des elements
-	// var requestcount
-	//var requestTimer
-	// boucle sur tant que LEnght - count != 0
-
-		// repo.FetchMultipleAsync(Count, {})
-		// wait timer + 5s
-
-	/*for _ , tag := range result.Tags{
-		err := srv.AddOneTagReferenceForALanguage(languageName, tag)
-		if err != nil {
-			fmt.Printf("%s - %s\n", tag, err)
-		}
-	}*/
-
-	/*for _ , tag := range result.Tags{
-		wg.Add(1)
-		go func(tag string) {
-			defer wg.Done()
-			err := srv.AddOneTagReferenceForALanguage(languageName, tag)
-			if err != nil {
-				fmt.Printf("%s - %s\n", tag, err)
-			}
-		}(tag)
-	}
-	wg.Wait()*/
 	return nil
 }
 
@@ -89,8 +77,6 @@ func (srv *imageReferenceService) AddOneTagReferenceForALanguage(languageName st
 	if err != nil {
 		fmt.Printf("error on %s : %s\n",tagName, err)
 	}
-
-	//fmt.Printf("%s - %s\n",tagName, tagReference)
 
 	return nil
 }

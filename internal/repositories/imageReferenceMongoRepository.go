@@ -2,14 +2,18 @@ package repositories
 
 import (
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/pkg/goDotEnv"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
+	"strings"
 )
 
 type imageReferenceRepository struct {}
@@ -82,4 +86,66 @@ func (repository *imageReferenceRepository) Add(imageReference domain.ImageRefer
 	}
 
 	return nil
+}
+
+func (repository *imageReferenceRepository)  AddAllTagReferenceFromApi() error {
+
+	mongoUri := goDotEnv.GetEnvVariable("MONGO_URI")
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoUri))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+
+	coll := client.Database("docker-for-noob").Collection("reference")
+
+	pathToInputData := goDotEnv.GetEnvVariable("BATCH_REFERENTIEL_BUFFER")
+
+	if _, err := os.Stat(pathToInputData);
+		err != nil {
+		log.Fatal(err)
+	}
+
+	f, err := os.Open(pathToInputData)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	csvReader := csv.NewReader(f)
+	csvData, err := csvReader.ReadAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var allReferenceToAdd []interface{}
+
+	for _, element := range csvData {
+		allReferenceToAdd = append(allReferenceToAdd, mapCsvResultToTagReferenceStruct(element))
+	}
+
+	result, err := coll.InsertMany(context.TODO(), allReferenceToAdd)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(result)
+
+	return nil
+}
+
+func mapCsvResultToTagReferenceStruct(csvLine []string) domain.ImageReference {
+
+	tagReference := domain.ImageReference{}
+	tagReference.Name = csvLine[0]
+	tagReference.Id, _ = uuid.Parse(csvLine[1])
+	tagReference.Port = strings.Fields(csvLine[2])
+	tagReference.Workdir = strings.Fields(csvLine[3])
+	return tagReference
 }

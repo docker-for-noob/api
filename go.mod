@@ -11,6 +11,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/m7shapan/njson v1.0.7
 	github.com/matiasvarela/errors v1.3.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/http-swagger v1.2.6
 	github.com/swaggo/swag v1.8.0
