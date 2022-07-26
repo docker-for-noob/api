@@ -5,6 +5,7 @@ type DockerHub struct {
 }
 
 type DockerHubImage struct {
+	Next    string   `njson:"next"`
 	Results []string `njson:"results"`
 }
 
