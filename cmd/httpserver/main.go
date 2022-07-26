@@ -30,7 +30,7 @@ func main() {
 
 	imageReferenceRepositoryInstantiated := repositories.NewImageReferenceRepository()
 
-	imageReferenceServiceInstantiated := imageReferenceService.New(imageReferenceRepositoryInstantiated)
+	imageReferenceServiceInstantiated := imageReferenceService.New(imageReferenceRepositoryInstantiated, dockerHubRepositoryInstantiated)
 
 	referenceHandler := imageReferenceHandler.NewImageReferenceHandler(imageReferenceServiceInstantiated)
 

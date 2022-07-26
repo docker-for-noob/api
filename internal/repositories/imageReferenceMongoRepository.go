@@ -9,16 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 type imageReferenceRepository struct {}
 
 func NewImageReferenceRepository() *imageReferenceRepository {
+
 	return &imageReferenceRepository{}
 }
 
 func (repository *imageReferenceRepository) Read(imageName string) (domain.ImageReference, error) {
-
 	mongoUri := goDotEnv.GetEnvVariable("MONGO_URI")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoUri))
 	if err != nil {
@@ -58,4 +59,27 @@ func (repository *imageReferenceRepository) Read(imageName string) (domain.Image
 	}
 
 	return response, nil
+}
+
+func (repository *imageReferenceRepository) Add(imageReference domain.ImageReference) error {
+	mongoUri := goDotEnv.GetEnvVariable("MONGO_URI")
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoUri))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+
+	coll := client.Database("docker-for-noob").Collection("reference")
+	doc := bson.D{{"Id", imageReference.Id}, {"Name", imageReference.Name}, {"Port", imageReference.Port}, {"workdir", imageReference.Workdir}, {"Env", imageReference.Env}}
+	_, err = coll.InsertOne(context.TODO(), doc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return nil
 }

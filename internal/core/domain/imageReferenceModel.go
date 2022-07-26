@@ -10,6 +10,12 @@ type ImageReference struct {
 	Env []EnvVar
 }
 
+func NewImageReference() ImageReference {
+	return ImageReference{
+		Id: uuid.New(),
+	}
+}
+
 type EnvVar struct {
 	Key string
 	Desc string
