@@ -24,3 +24,6 @@ go.work
 
 # Build directory for dev
 tmp/
+mongo_db
+redis_db
+redis_insight
