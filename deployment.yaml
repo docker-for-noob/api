@@ -18,10 +18,8 @@ spec:
         - name: api-deployment
           image: gcr.io/PROJECT_ID/IMAGE:TAG
           ports:
-            - name: api
-              protocol: TCP
-              hostPort: 80
-              containerPort: 8080
+            - containerPort: 80
+
         - name: redis
           image: redislabs/redismod
           ports:
