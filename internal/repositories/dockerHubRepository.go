@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -23,16 +24,10 @@ func NewDockerHubRepository() *dockerHubRepository {
 	return &dockerHubRepository{rdb: rdb, ctx: ctx}
 }
 
-func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
-	var dockerHubTags []string
+func GetDockerHubResult(image string, tag string, page int) (domain.DockerHubImage, error) {
+	var dockerHubImage domain.DockerHubImage
 
-	// TODO : Boucle sur toutes les pages
-	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag + "&page_size=100")
-
-	if resp.StatusCode == 403 {
-		DockerImageResult := domain.DockerImageResult{}
-		return DockerImageResult, nil
-	}
+	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/?name=" + tag + "&page=" + strconv.Itoa(page) + "&page_size=100")
 
 	if err != nil {
 		log.Fatal(err)
@@ -40,24 +35,38 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 	jsonDataFromHttp, err := io.ReadAll(resp.Body)
 
-	var dockerHubImage domain.DockerHubImage
-
 	err = njson.Unmarshal(jsonDataFromHttp, &dockerHubImage)
+	return dockerHubImage, err
+}
 
-	if err != nil {
-		log.Fatal(err)
+func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
+	var dockerHubResult []string
+	var dockerHubTags []string
+	var page = 1
+
+	for true {
+		resp, err := GetDockerHubResult(image, tag, page)
+
+		if err != nil {
+			DockerImageResult := domain.DockerImageResult{}
+			return DockerImageResult, nil
+		}
+
+		dockerHubResult = append(dockerHubResult, resp.Results...)
+
+		if resp.Next == "" {
+			break
+		}
+
+		page += 1
 	}
 
-	if err != nil {
-		return domain.DockerImageResult{}, err
-	}
-
-	for _, data := range dockerHubImage.Results {
+	for _, data := range dockerHubResult {
 		var finalData domain.DockerHubTags
 		errormessage := njson.Unmarshal([]byte(data), &finalData)
 
 		if errormessage != nil {
-			log.Fatal(err)
+			log.Fatal(errormessage)
 		}
 
 		encoded, _ := json.Marshal(finalData.Tag)
