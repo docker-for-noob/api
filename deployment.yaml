@@ -35,7 +35,6 @@ spec:
                 - --disableImplicitSessions
                 - --eval
                 - "db.adminCommand('ping')"
-                - "db.createCollection('reference')"
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5

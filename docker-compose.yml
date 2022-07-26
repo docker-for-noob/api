@@ -9,7 +9,7 @@ services:
     volumes:
       - ./:/go/src/api/
     ports:
-      - "8080:8080"
+      - "80:80"
   mongo:
     container_name: mongo
     image: mongo
