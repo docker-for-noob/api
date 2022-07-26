@@ -53,6 +53,11 @@ spec:
             successThreshold: 1
             failureThreshold: 6
           env:
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database
+                  name: mongo-creds
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
