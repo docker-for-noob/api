@@ -25,7 +25,7 @@ spec:
           ports:
             - containerPort: 6379
 
-        - image: bitnami/mongodb
+        - image: bitnami/mongodb:latest
           name: mongo
           args: [ "--dbpath","/data/db" ]
           livenessProbe:
