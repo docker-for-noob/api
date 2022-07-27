@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/pkg/goDotEnv"
-	"github.com/docker-generator/api/pkg/uidgen"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -110,8 +111,9 @@ func mapCsvResultToTagReferenceStruct(csvLine []string) domain.ImageReference {
 
 	tagReference := domain.ImageReference{}
 	tagReference.Name = csvLine[0]
-	tagReference.Id = uidgen.New()
+	tagReference.Id, _ = uuid.Parse(csvLine[1])
 	tagReference.Port = strings.Fields(csvLine[2])
 	tagReference.Workdir = strings.Fields(csvLine[3])
+	fmt.Println(tagReference)
 	return tagReference
 }

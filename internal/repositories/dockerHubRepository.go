@@ -120,8 +120,7 @@ func (repo *dockerHubRepository) GetTagReference(image string, tag string) (doma
 		return domain.ImageReference{}, errors.New(apperrors.Internal, errormessage, "An internal error occured while searching the reference", "")
 	}
 
-	imageReference := domain.NewImageReference()
-
+	var imageReference = domain.ImageReference{}
 	imageReference.Name = image + ":" + tag
 
 	for _, data := range instruction[0].Layers {
@@ -181,12 +180,14 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 				return err
 			}
 		}
-		values := tagReferenceToSlice(tagReference)
-		err = csvwriter.Write(values)
-		if err != nil {
-			return err
+		if len(tagReference.Port) > 0 && len(tagReference.Workdir) > 0 {
+			values := tagReferenceToSlice(tagReference)
+			err = csvwriter.Write(values)
+			if err != nil {
+				return err
+			}
+			csvwriter.Flush()
 		}
-		csvwriter.Flush()
 	}
 
 	return nil

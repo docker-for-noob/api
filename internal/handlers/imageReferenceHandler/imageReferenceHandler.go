@@ -27,7 +27,7 @@ func NewImageReferenceHandler(imageReferenceService ports.ImageReferenceService)
 // @Produce json
 // @Success      200  {object}  domain.ImageReference
 // @Failure      404  {object}  object
-// @Router /dockerHub/images/{image}/{tag} [get]
+// @Router /reference/{image} [get]
 func (h imageReferenceHandler) Get(w http.ResponseWriter, r *http.Request) {
 	image := chi.URLParam(r, "image")
 
