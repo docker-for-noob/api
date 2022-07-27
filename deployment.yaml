@@ -25,7 +25,7 @@ spec:
           ports:
             - containerPort: 6379
 
-        - image: bitnami/mongodb:latest
+        - image: mongo
           name: mongo
           args: [ "--dbpath","/data/db" ]
           livenessProbe:
@@ -53,24 +53,24 @@ spec:
             successThreshold: 1
             failureThreshold: 6
           env:
-            - name: MONGODB_DATABASE
+            - name: MONGO_INITDB_DATABASE
               valueFrom:
                 secretKeyRef:
                   key: database
                   name: mongo-creds
-            - name: MONGODB_USERNAME
+            - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: mongo-creds
                   key: username
-            - name: MONGODB_PASSWORD
+            - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mongo-creds
                   key: password
           volumeMounts:
             - name: "mongo-data-dir"
-              mountPath: "/bitnami"
+              mountPath: "/data/db"
       volumes:
         - name: "mongo-data-dir"
           persistentVolumeClaim:
