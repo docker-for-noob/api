@@ -1,13 +1,19 @@
 package domain
 
-import "github.com/google/uuid"
+import "github.com/docker-generator/api/pkg/uidgen"
 
 type ImageReference struct {
-	Id uuid.UUID
-	Name string
-	Workdir []string
-	Port []string
-	Env []EnvVar
+	Id uidgen.UIDGen `bson:"Id"`
+	Name string `bson:"Name"`
+	Workdir []string `bson:"Workdir"`
+	Port []string `bson:"Port"`
+	Env []EnvVar `bson:"Env"`
+}
+
+func NewImageReference() ImageReference {
+	return ImageReference{
+		Id: uidgen.New(),
+	}
 }
 
 type EnvVar struct {

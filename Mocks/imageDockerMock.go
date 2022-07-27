@@ -34,6 +34,35 @@ func (m *MockDockerHubRepository) EXPECT() *MockDockerHubRepositoryMockRecorder 
 	return m.recorder
 }
 
+// GetTagReference mocks base method.
+func (m *MockDockerHubRepository) GetTagReference(image, tag string) (domain.ImageReference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTagReference", image, tag)
+	ret0, _ := ret[0].(domain.ImageReference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTagReference indicates an expected call of GetTagReference.
+func (mr *MockDockerHubRepositoryMockRecorder) GetTagReference(image, tag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTagReference", reflect.TypeOf((*MockDockerHubRepository)(nil).GetTagReference), image, tag)
+}
+
+// HandleMultipleGetTagReference mocks base method.
+func (m *MockDockerHubRepository) HandleMultipleGetTagReference(languageName string, allTags []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HandleMultipleGetTagReference", languageName, allTags)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// HandleMultipleGetTagReference indicates an expected call of HandleMultipleGetTagReference.
+func (mr *MockDockerHubRepositoryMockRecorder) HandleMultipleGetTagReference(languageName, allTags interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleMultipleGetTagReference", reflect.TypeOf((*MockDockerHubRepository)(nil).HandleMultipleGetTagReference), languageName, allTags)
+}
+
 // Read mocks base method.
 func (m *MockDockerHubRepository) Read(image, tag string) (domain.DockerImageResult, error) {
 	m.ctrl.T.Helper()
