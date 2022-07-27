@@ -1,9 +1,9 @@
 package domain
 
-import "github.com/google/uuid"
+import "github.com/docker-generator/api/pkg/uidgen"
 
 type ImageReference struct {
-	Id uuid.UUID `bson:"Id"`
+	Id uidgen.UIDGen `bson:"Id"`
 	Name string `bson:"Name"`
 	Workdir []string `bson:"Workdir"`
 	Port []string `bson:"Port"`
@@ -12,7 +12,7 @@ type ImageReference struct {
 
 func NewImageReference() ImageReference {
 	return ImageReference{
-		Id: uuid.New(),
+		Id: uidgen.New(),
 	}
 }
 

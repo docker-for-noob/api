@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/docker-generator/api/internal/core/services/imageDockerService"
 	"github.com/docker-generator/api/internal/core/services/imageReferenceService"
 	"github.com/docker-generator/api/internal/handlers/referenceBatchHandler"
 	"github.com/docker-generator/api/internal/repositories"
@@ -13,7 +14,9 @@ import (
 func main() {
 	imageReferenceRepositoryInstanciated := repositories.NewImageReferenceRepository()
 	dockerHubRepositoryInstantiated := repositories.NewDockerHubRepository()
-	imageReferencialServiceinstanciated := imageReferenceService.New(imageReferenceRepositoryInstanciated, dockerHubRepositoryInstantiated)
+	redisRepositoryInstantiated := repositories.NewRedisRepository()
+	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated)
+	imageReferencialServiceinstanciated := imageReferenceService.New(imageReferenceRepositoryInstanciated, dockerHubRepositoryInstantiated, imageDockerServiceInstantiated)
 	referenceBatchHandlerInstanciated := referenceBatchHandler.NewReferenceBatchHandler(imageReferencialServiceinstanciated)
 
 	app := &cli.App{

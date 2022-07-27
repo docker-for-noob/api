@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/docker-generator/api/pkg/goDotEnv"
@@ -100,11 +99,9 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 
 func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error){
 
-	fmt.Println("https://hub.docker.com/v2/repositories/library/"+ image +"/tags/"+ tag +"/images")
-
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/"+ image +"/tags/"+ tag +"/images")
 	if err != nil {
-		log.Fatal(err)
+		return domain.ImageReference{}, err
 	}
 
 	remainingRequest := resp.Header.Get("x-ratelimit-remaining")
@@ -140,15 +137,13 @@ func (repo *dockerHubRepository) GetTagReference(image string, tag string) (doma
 			}
 		}
 	}
-	fmt.Println(remainingRequest)
+
 	if remainingRequest == "0"{
 		responseTimeStampInInt, _ := strconv.ParseInt(timeStampUntilNextRequest, 10, 64)
 		shouldIWait := time.Now().Unix() < responseTimeStampInInt
-		fmt.Println(time.Now().Unix())
 		for shouldIWait {
 			time.Sleep(60 * time.Second)
 			shouldIWait = time.Now().Unix() < responseTimeStampInInt
-			fmt.Println(time.Now().Unix())
 		}
 	}
 
@@ -160,21 +155,22 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 	pathToBuffer := goDotEnv.GetEnvVariable("BATCH_REFERENTIEL_BUFFER")
 	if _, err := os.Stat(pathToBuffer);
 		err != nil {
-		log.Fatal(err)
+			return err
 	}
 
 	f, err := os.OpenFile(pathToBuffer, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	csvwriter := csv.NewWriter(f)
 
-	defer func(f *os.File) {
-		err := f.Close()
+	defer func() {
+		err = f.Close()
 		if err != nil {
+			panic(err)
 		}
-	}(f)
+	}()
 
 	for _, tagName := range allTag{
 		tagReference, err := repo.GetTagReference(image , tagName )
@@ -182,13 +178,13 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 			time.Sleep(60 * time.Second)
 			tagReference, err = repo.GetTagReference(image , tagName )
 			if err != nil {
-				fmt.Printf("error on %s : %s\n",tagName, err)
+				return err
 			}
 		}
 		values := tagReferenceToSlice(tagReference)
 		err = csvwriter.Write(values)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		csvwriter.Flush()
 	}
