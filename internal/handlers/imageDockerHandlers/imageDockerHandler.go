@@ -46,7 +46,7 @@ func (h HTTPHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	if resp.Name != "" && resp.Tags == nil {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Tag doesn't exist"))
+		w.Write([]byte("Tags doesn't exist"))
 		return
 	}
 

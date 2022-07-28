@@ -261,7 +261,6 @@ func tagReferenceToSlice(reference domain.ImageReference) []string {
 
 	slice := []string{
 		reference.Name,
-		reference.Id.String(),
 		portsToString,
 		workDirToSting,
 		envToSting,
