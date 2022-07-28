@@ -110,11 +110,27 @@ func (repo *dockerHubRepository) GetImages() (domain.DockerImages, error) {
 
 func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
 	DockerImageVersions := domain.DockerImageVersions{
-		Name: "php",
-		Versions: []string{
-			"8.0",
-			"7.4",
-			"5.2",
+		Details: []domain.DockerImageDetails{
+			{
+				Name:     "php8.0-rc-buster",
+				Version:  "8.0",
+				Language: "php",
+				Tags: []string{
+					"rc-buster",
+					"rc-apache-buster",
+					"rc",
+				},
+			},
+			{
+				Name:     "php7.0-rc-apache",
+				Version:  "7.0",
+				Language: "php",
+				Tags: []string{
+					"rc-buster",
+					"rc-apache-buster",
+					"rc",
+				},
+			},
 		},
 	}
 	return DockerImageVersions, nil
@@ -122,8 +138,9 @@ func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.D
 
 func (repo *dockerHubRepository) GetAllTagsFromImageVersion(image string, version string) (domain.DockerImageDetails, error) {
 	DockerImageDetails := domain.DockerImageDetails{
-		Name:    "php",
-		Version: "8.0",
+		Name:     "php8.0-rc-buster",
+		Version:  "8.0",
+		Language: "8.0",
 		Tags: []string{
 			"rc-buster",
 			"rc-apache-buster",

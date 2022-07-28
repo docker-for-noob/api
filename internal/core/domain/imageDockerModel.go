@@ -9,14 +9,14 @@ type DockerImages struct {
 }
 
 type DockerImageVersions struct {
-	Name     string
-	Versions []string
+	Details []DockerImageDetails
 }
 
 type DockerImageDetails struct {
-	Name    string
-	Version string
-	Tags    []string
+	Name     string
+	Language string
+	Version  string
+	Tags     []string
 }
 
 type DockerHubImage struct {
