@@ -120,6 +120,19 @@ func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.D
 	return DockerImageVersions, nil
 }
 
+func (repo *dockerHubRepository) GetAllTagsFromImageVersion(image string, version string) (domain.DockerImageDetails, error) {
+	DockerImageDetails := domain.DockerImageDetails{
+		Name:    "php",
+		Version: "8.0",
+		Tags: []string{
+			"rc-buster",
+			"rc-apache-buster",
+			"rc",
+		},
+	}
+	return DockerImageDetails, nil
+}
+
 func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error) {
 
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/" + tag + "/images")

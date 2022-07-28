@@ -13,6 +13,12 @@ type DockerImageVersions struct {
 	Versions []string
 }
 
+type DockerImageDetails struct {
+	Name    string
+	Version string
+	Tags    []string
+}
+
 type DockerHubImage struct {
 	Next    string   `njson:"next"`
 	Results []string `njson:"results"`

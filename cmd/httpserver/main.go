@@ -48,7 +48,7 @@ func main() {
 		})
 		publicRouter.Get("/dockerImage/images", imageDockerHandler.GetImages)
 		publicRouter.Get("/dockerImage/images/{image}/versions", imageDockerHandler.GetAllVersionsFromImage)
-		//publicRouter.Get("/dockerImage/images/{image}/versions/{version}/tags", imageDockerHandler.GetAllTagsFromImageVersion)
+		publicRouter.Get("/dockerImage/images/{image}/versions/{version}/tags", imageDockerHandler.GetAllTagsFromImageVersion)
 		publicRouter.Get("/swagger/*", httpSwagger.Handler(
 			httpSwagger.URL(":80/swagger/doc.json"), //The url pointing to API definition
 		))

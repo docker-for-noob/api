@@ -40,3 +40,10 @@ func (srv *imageDockerService) GetAllVersionsFromImage(image string) (domain.Doc
 
 	return resp, err
 }
+
+func (srv *imageDockerService) GetAllTagsFromImageVersion(image string, version string) (domain.DockerImageDetails, error) {
+
+	resp, err := srv.dockerHubRepository.GetAllTagsFromImageVersion(image, version)
+
+	return resp, err
+}

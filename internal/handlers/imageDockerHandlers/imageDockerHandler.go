@@ -112,3 +112,30 @@ func (h HTTPHandler) GetAllVersionsFromImage(w http.ResponseWriter, r *http.Requ
 		return
 	}
 }
+
+func (h HTTPHandler) GetAllTagsFromImageVersion(w http.ResponseWriter, r *http.Request) {
+	image := chi.URLParam(r, "image")
+	version := chi.URLParam(r, "version")
+
+	resp, err := h.imageDockerService.GetAllTagsFromImageVersion(image, version)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	result, errMarshal := json.Marshal(resp)
+
+	if errMarshal != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	_, errResult := w.Write(result)
+	if errResult != nil {
+		return
+	}
+}
