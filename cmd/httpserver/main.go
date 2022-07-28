@@ -47,8 +47,8 @@ func main() {
 			fmt.Println("toto")
 		})
 		publicRouter.Get("/dockerImage/images", imageDockerHandler.GetImages)
-		publicRouter.Get("/dockerImage/images/{image}/versions", imageDockerHandler.GetAllVersionsFromImage)
-		publicRouter.Get("/dockerImage/images/{image}/versions/{version}/tags", imageDockerHandler.GetAllTagsFromImageVersion)
+		publicRouter.Get("/dockerImage/versions/{image}", imageDockerHandler.GetAllVersionsFromImage)
+		publicRouter.Get("/dockerImage/tags/{image}/{version}", imageDockerHandler.GetAllTagsFromImageVersion)
 		publicRouter.Get("/swagger/*", httpSwagger.Handler(
 			httpSwagger.URL(":80/swagger/doc.json"), //The url pointing to API definition
 		))
