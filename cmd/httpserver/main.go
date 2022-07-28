@@ -43,7 +43,6 @@ func main() {
 	}))
 
 	router.Group(func(publicRouter chi.Router) {
-		publicRouter.Get("/dockerImage/{image}/*", imageDockerHandler.Get)
 		publicRouter.Get("/dockerImage/images", imageDockerHandler.GetImages)
 		publicRouter.Get("/dockerImage/versions/{image}", imageDockerHandler.GetAllVersionsFromImage)
 		publicRouter.Get("/dockerImage/tags/{image}/{version}", imageDockerHandler.GetAllTagsFromImageVersion)
