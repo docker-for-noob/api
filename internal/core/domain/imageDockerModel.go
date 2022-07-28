@@ -5,7 +5,9 @@ type DockerHub struct {
 }
 
 type DockerImages struct {
-	Images []string `njson:"results"`
+	Results []struct {
+		Name string `json:"name"`
+	} `json:"results"`
 }
 
 type DockerImageVersions struct {
