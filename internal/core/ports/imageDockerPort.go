@@ -7,6 +7,7 @@ import (
 type DockerHubRepository interface {
 	Read(image string, tag string) (domain.DockerImageResult, error)
 	GetImages() (domain.DockerImages, error)
+	GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error)
 	GetTagReference(image string, tag string) (domain.ImageReference, error)
 	HandleMultipleGetTagReference(languageName string, allTags []string) error
 }
@@ -19,4 +20,5 @@ type RedisRepository interface {
 type ImageDockerService interface {
 	Get(image string, tag string) (domain.DockerImageResult, error)
 	GetImages() (domain.DockerImages, error)
+	GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error)
 }

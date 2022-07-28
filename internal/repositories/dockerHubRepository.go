@@ -108,6 +108,18 @@ func (repo *dockerHubRepository) GetImages() (domain.DockerImages, error) {
 	return DockerImages, nil
 }
 
+func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
+	DockerImageVersions := domain.DockerImageVersions{
+		Name: "php",
+		Versions: []string{
+			"8.0",
+			"7.4",
+			"5.2",
+		},
+	}
+	return DockerImageVersions, nil
+}
+
 func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error) {
 
 	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/" + tag + "/images")
@@ -164,8 +176,7 @@ func (repo *dockerHubRepository) GetTagReference(image string, tag string) (doma
 func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, allTag []string) error {
 
 	pathToBuffer := goDotEnv.GetEnvVariable("BATCH_REFERENTIEL_BUFFER")
-	if _, err := os.Stat(pathToBuffer);
-		err != nil {
+	if _, err := os.Stat(pathToBuffer); err != nil {
 		return err
 	}
 

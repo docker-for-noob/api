@@ -33,3 +33,10 @@ func (srv *imageDockerService) GetImages() (domain.DockerImages, error) {
 
 	return resp, err
 }
+
+func (srv *imageDockerService) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
+
+	resp, err := srv.dockerHubRepository.GetAllVersionsFromImage(image)
+
+	return resp, err
+}

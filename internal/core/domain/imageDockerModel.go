@@ -8,6 +8,11 @@ type DockerImages struct {
 	Images []string `njson:"results"`
 }
 
+type DockerImageVersions struct {
+	Name     string
+	Versions []string
+}
+
 type DockerHubImage struct {
 	Next    string   `njson:"next"`
 	Results []string `njson:"results"`

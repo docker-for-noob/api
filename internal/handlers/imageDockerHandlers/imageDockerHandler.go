@@ -86,3 +86,29 @@ func (h HTTPHandler) GetImages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h HTTPHandler) GetAllVersionsFromImage(w http.ResponseWriter, r *http.Request) {
+	image := chi.URLParam(r, "image")
+
+	resp, err := h.imageDockerService.GetAllVersionsFromImage(image)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	result, errMarshal := json.Marshal(resp)
+
+	if errMarshal != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	_, errResult := w.Write(result)
+	if errResult != nil {
+		return
+	}
+}
