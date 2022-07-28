@@ -4,6 +4,10 @@ type DockerHub struct {
 	DockerHubData []byte `json:"dockerHubData"`
 }
 
+type DockerImages struct {
+	Images []string `njson:"results"`
+}
+
 type DockerHubImage struct {
 	Next    string   `njson:"next"`
 	Results []string `njson:"results"`

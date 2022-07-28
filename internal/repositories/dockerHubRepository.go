@@ -97,9 +97,20 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 	return DockerImageResult, nil
 }
 
-func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error){
+func (repo *dockerHubRepository) GetImages() (domain.DockerImages, error) {
+	DockerImages := domain.DockerImages{
+		Images: []string{
+			"php",
+			"node",
+			"phpMyAdmin",
+		},
+	}
+	return DockerImages, nil
+}
 
-	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/"+ image +"/tags/"+ tag +"/images")
+func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error) {
+
+	resp, err := http.Get("https://hub.docker.com/v2/repositories/library/" + image + "/tags/" + tag + "/images")
 	if err != nil {
 		return domain.ImageReference{}, err
 	}
@@ -138,7 +149,7 @@ func (repo *dockerHubRepository) GetTagReference(image string, tag string) (doma
 		}
 	}
 
-	if remainingRequest == "0"{
+	if remainingRequest == "0" {
 		responseTimeStampInInt, _ := strconv.ParseInt(timeStampUntilNextRequest, 10, 64)
 		shouldIWait := time.Now().Unix() < responseTimeStampInInt
 		for shouldIWait {
@@ -155,7 +166,7 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 	pathToBuffer := goDotEnv.GetEnvVariable("BATCH_REFERENTIEL_BUFFER")
 	if _, err := os.Stat(pathToBuffer);
 		err != nil {
-			return err
+		return err
 	}
 
 	f, err := os.OpenFile(pathToBuffer, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -172,11 +183,11 @@ func (repo *dockerHubRepository) HandleMultipleGetTagReference(image string, all
 		}
 	}()
 
-	for _, tagName := range allTag{
-		tagReference, err := repo.GetTagReference(image , tagName )
+	for _, tagName := range allTag {
+		tagReference, err := repo.GetTagReference(image, tagName)
 		if err != nil {
 			time.Sleep(60 * time.Second)
-			tagReference, err = repo.GetTagReference(image , tagName )
+			tagReference, err = repo.GetTagReference(image, tagName)
 			if err != nil {
 				return err
 			}
@@ -223,7 +234,7 @@ func tagReferenceToSlice(reference domain.ImageReference) []string {
 		}
 	}
 
-	slice := []string {
+	slice := []string{
 		reference.Name,
 		reference.Id.String(),
 		portsToString,

@@ -26,3 +26,10 @@ func (srv *imageDockerService) Get(image string, tag string) (domain.DockerImage
 
 	return resp, err
 }
+
+func (srv *imageDockerService) GetImages() (domain.DockerImages, error) {
+
+	resp, err := srv.dockerHubRepository.GetImages()
+
+	return resp, err
+}
