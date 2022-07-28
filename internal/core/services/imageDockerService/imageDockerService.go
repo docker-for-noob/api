@@ -26,3 +26,24 @@ func (srv *imageDockerService) Get(image string, tag string) (domain.DockerImage
 
 	return resp, err
 }
+
+func (srv *imageDockerService) GetImages() (domain.DockerImages, error) {
+
+	resp, err := srv.dockerHubRepository.GetImages()
+
+	return resp, err
+}
+
+func (srv *imageDockerService) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
+
+	resp, err := srv.dockerHubRepository.GetAllVersionsFromImage(image)
+
+	return resp, err
+}
+
+func (srv *imageDockerService) GetAllTagsFromImageVersion(image string, version string) (domain.DockerImageDetails, error) {
+
+	resp, err := srv.dockerHubRepository.GetAllTagsFromImageVersion(image, version)
+
+	return resp, err
+}
