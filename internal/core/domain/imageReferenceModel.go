@@ -1,17 +1,18 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type ImageReference struct {
-	Id uuid.UUID `bson:"Id"`
 	Name string `bson:"Name"`
 	Workdir []string `bson:"Workdir"`
 	Port []string `bson:"Port"`
 	Env []EnvVar `bson:"Env"`
 }
 
+type ImageNameDetail struct {
+	Name     string   `bson:"Name"`
+	Language string   `bson:"Language"`
+	Version  string   `bson:"Version"`
+	Tags     []string `bson:"Tags"`
+}
 
 type EnvVar struct {
 	Key string

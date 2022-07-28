@@ -4,10 +4,8 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/pkg/goDotEnv"
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -60,7 +58,7 @@ func (repository *imageReferenceRepository) Read(imageName string) (domain.Image
 func (repository *imageReferenceRepository) Add(imageReference domain.ImageReference) error {
 
 	coll := repository.client.Database("docker-for-noob").Collection("reference")
-	doc := bson.D{{"Id", imageReference.Id}, {"Name", imageReference.Name}, {"Port", imageReference.Port}, {"workdir", imageReference.Workdir}, {"Env", imageReference.Env}}
+	doc := bson.D{{"Name", imageReference.Name}, {"Port", imageReference.Port}, {"workdir", imageReference.Workdir}, {"Env", imageReference.Env}}
 	_, err := coll.InsertOne(context.TODO(), doc)
 	if err != nil {
 		return err
@@ -111,9 +109,7 @@ func mapCsvResultToTagReferenceStruct(csvLine []string) domain.ImageReference {
 
 	tagReference := domain.ImageReference{}
 	tagReference.Name = csvLine[0]
-	tagReference.Id, _ = uuid.Parse(csvLine[1])
 	tagReference.Port = strings.Fields(csvLine[2])
 	tagReference.Workdir = strings.Fields(csvLine[3])
-	fmt.Println(tagReference)
 	return tagReference
 }
