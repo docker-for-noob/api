@@ -21,10 +21,10 @@ type DockerImageVersions struct {
 }
 
 type ImageNameDetail struct {
-	Name     string   `bson:"Name"`
-	Language string   `bson:"Language"`
-	Version  string   `bson:"Version"`
-	Tags     []string `bson:"Tags"`
+	Name     string
+	Language string
+	Version  string
+	Tags     []string
 }
 
 type DockerHubImage struct {

@@ -1,10 +1,10 @@
 package domain
 
 type ImageReference struct {
-	Name string `bson:"Name"`
-	Workdir []string `bson:"Workdir"`
-	Port []string `bson:"Port"`
-	Env []EnvVar `bson:"Env"`
+	Name string
+	Workdir []string
+	Port []string
+	Env []EnvVar
 }
 
 type EnvVar struct {

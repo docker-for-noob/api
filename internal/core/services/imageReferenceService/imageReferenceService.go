@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/ports"
+	"github.com/docker-generator/api/internal/core/services/splitImageDockerService"
 	apperrors "github.com/docker-generator/api/pkg/apperror"
 	"github.com/matiasvarela/errors"
 )
@@ -49,7 +50,9 @@ func (srv *imageReferenceService) AddAllTagReference(allLanguage []string) error
 			return errors.New(apperrors.Internal, err, "An internal error occured while searching ALL the reference", "")
 		}
 	}
-	err := srv.imageReferenceRepository.AddAllTagReferenceFromApi()
+
+
+	err := srv.imageReferenceRepository.AddAllTagReferenceFromApi(splitImageDockerService.SplitDockerImageName)
 	if err != nil {
 		return errors.New(apperrors.Internal, err, "An internal error occured while adding the reference in dadabase", "")
 	}
@@ -70,7 +73,7 @@ func (srv *imageReferenceService) FindAllTagReferenceForALanguage(languageName s
 	return nil
 }
 
-// non utiliser pour le moment, a utiliser lorsque l'on ne trouve pas d'info dans le mongo
+// non utilisé pour le moment, a utiliser lorsque l'on ne trouve pas d'info dans le mongo
 func (srv *imageReferenceService) AddOneTagReferenceForALanguage(languageName string, tagName string) error {
 
 	tagReference, err := srv.dockerHubRepository.GetTagReference(languageName , tagName )
