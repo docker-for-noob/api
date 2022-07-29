@@ -13,6 +13,7 @@ import (
 type mockers struct {
 	dockerHubRepository *mock_ports.MockDockerHubRepository
 	redisRepository     *mock_ports.MockRedisRepository
+	dbRepository        *mock_ports.MockImageReferenceRepository
 }
 
 func TestGetImageRequest(t *testing.T) {
@@ -78,10 +79,11 @@ func TestGetImageRequest(t *testing.T) {
 		m := mockers{
 			dockerHubRepository: mock_ports.NewMockDockerHubRepository(gomock.NewController(t)),
 			redisRepository:     mock_ports.NewMockRedisRepository(gomock.NewController(t)),
+			dbRepository: mock_ports.NewMockImageReferenceRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository)
+		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository, m.dbRepository)
 
 		result, err := service.Get(tt.args.image, tt.args.tag)
 
@@ -154,10 +156,11 @@ func TestGetAllVersionsFromImage(t *testing.T) {
 		m := mockers{
 			dockerHubRepository: mock_ports.NewMockDockerHubRepository(gomock.NewController(t)),
 			redisRepository:     mock_ports.NewMockRedisRepository(gomock.NewController(t)),
+			dbRepository: mock_ports.NewMockImageReferenceRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository)
+		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository, m.dbRepository)
 
 		result, err := service.GetAllVersionsFromImage(tt.args.image)
 
@@ -174,9 +177,6 @@ func TestGetAllVersionsFromImage(t *testing.T) {
 func TestGetAllTagsFromImageVersion(t *testing.T) {
 
 	//Mocks//
-	//sampleWantedDockerImage := domain.DockerImageResult{Name: "mysql", Tags: []string{"latest", "8.0.30-oracle", "8.0-oracle"}}
-	//sampleWantedDockerImageWithDoublonVersion := domain.DockerImageResult{Name: "mysql", Tags: []string{"latest", "8.0.30-oracle", "8.0-oracle", "8.0-debian"}}
-
 
 	//Tests//
 
@@ -198,10 +198,13 @@ func TestGetAllTagsFromImageVersion(t *testing.T) {
 	}{
 		{
 			name: "Should return all Tags from cache",
-			args: args{languageName: "mysql", version: "5.7.32"},
-			want: want{result: []domain.ImageNameDetail{{Name: "mysql:5.7.32", Language: "mysql", Version: "5.7.32", Tags: []string{} }}},
+			args: args{languageName: "mysql", version: "5.7.36"},
+			want: want{result: []domain.ImageNameDetail{{Name: "mysql:5.7.36", Language: "mysql", Version: "5.7.36", Tags: []string{} }}},
 			mocks: func(m mockers) {
-				m.redisRepository.EXPECT().FindOne("tags_mysql:5.7.32").Return(`[{"Name": "mysql:5.7.32", "Language": "mysql", "Version": "5.7.32", "Tags": []}]`)
+				m.redisRepository.EXPECT().FindDockerImageResult("tags_mysql:5.7.36").Return(
+				[]string{
+					`[{"Name":"mysql:5.7.36","Language":"mysql","Version":"5.7.36","Tags":[]}]`,
+				})
 			},
 		},
 	}
@@ -214,10 +217,11 @@ func TestGetAllTagsFromImageVersion(t *testing.T) {
 		m := mockers{
 			dockerHubRepository: mock_ports.NewMockDockerHubRepository(gomock.NewController(t)),
 			redisRepository:     mock_ports.NewMockRedisRepository(gomock.NewController(t)),
+			dbRepository: mock_ports.NewMockImageReferenceRepository(gomock.NewController(t)),
 		}
 
 		tt.mocks(m)
-		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository)
+		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository, m.dbRepository)
 
 		result, err := service.GetAllTagsFromImageVersion(tt.args.languageName, tt.args.version)
 

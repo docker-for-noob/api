@@ -9,6 +9,7 @@ type ImageReferenceRepository interface {
 	Read(imageName string) (domain.ImageReference, error)
 	Add(imageReference domain.ImageReference) error
 	AddAllTagReferenceFromApi(fn repositories.Formater) error
+	FindAllPortForLanguageAndVersion(language string, version string) []domain.ImageNameDetail
 }
 
 type ImageReferenceService interface {

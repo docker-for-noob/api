@@ -120,8 +120,8 @@ func (h HTTPHandler) GetAllTagsFromImageVersion(w http.ResponseWriter, r *http.R
 	resp, err := h.imageDockerService.GetAllTagsFromImageVersion(image, version)
 
 	if err != nil {
-		w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 

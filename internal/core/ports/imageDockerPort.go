@@ -7,7 +7,6 @@ import (
 type DockerHubRepository interface {
 	Read(image string, tag string) (domain.DockerImageResult, error)
 	GetImages() (domain.DockerImagesParse, error)
-	GetAllTagsFromImageVersion(image string, version string) (domain.ImageNameDetail, error)
 	GetTagReference(image string, tag string) (domain.ImageReference, error)
 	HandleMultipleGetTagReference(languageName string, allTags []string) error
 }

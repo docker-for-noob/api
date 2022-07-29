@@ -15,7 +15,8 @@ func main() {
 	imageReferenceRepositoryInstanciated := repositories.NewImageReferenceRepository()
 	dockerHubRepositoryInstantiated := repositories.NewDockerHubRepository()
 	redisRepositoryInstantiated := repositories.NewRedisRepository()
-	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated)
+	mongoRepositoryInstanciated := repositories.NewImageReferenceRepository()
+	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated, mongoRepositoryInstanciated)
 	imageReferencialServiceinstanciated := imageReferenceService.New(imageReferenceRepositoryInstanciated, dockerHubRepositoryInstantiated, imageDockerServiceInstantiated)
 	referenceBatchHandlerInstanciated := referenceBatchHandler.NewReferenceBatchHandler(imageReferencialServiceinstanciated)
 

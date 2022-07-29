@@ -2,6 +2,7 @@ package imageDockerService
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/ports"
 	"github.com/docker-generator/api/internal/core/services/splitImageDockerService"
@@ -13,12 +14,14 @@ import (
 type imageDockerService struct {
 	dockerHubRepository ports.DockerHubRepository
 	redisRepository     ports.RedisRepository
+	dbRepository		ports.ImageReferenceRepository
 }
 
-func New(dockerHubRepository ports.DockerHubRepository, redisRepository ports.RedisRepository) *imageDockerService {
+func New(dockerHubRepository ports.DockerHubRepository, redisRepository ports.RedisRepository, dbRepository	ports.ImageReferenceRepository) *imageDockerService {
 	return &imageDockerService{
 		dockerHubRepository: dockerHubRepository,
 		redisRepository:     redisRepository,
+		dbRepository: dbRepository,
 	}
 }
 
@@ -71,12 +74,18 @@ func (srv *imageDockerService) GetAllTagsFromImageVersion(languageName string, v
 	cacheKey := "tags_" + languageName + ":" + version
 
 	response := srv.redisRepository.FindDockerImageResult(cacheKey)
+	fmt.Println(response[0])
+	fmt.Println(len(response) > 1)
 
 	var allImageTagsDetail []domain.ImageNameDetail
 
-	err := json.Unmarshal([]byte(response[0]), &allImageTagsDetail)
-	if err != nil {
-		return nil,  errors.New(apperrors.Internal, err, "An internal error occured while searching the tags", "")
+	if len(response) > 0  {
+		err := json.Unmarshal([]byte(response[0]), &allImageTagsDetail)
+		if err != nil {
+			return nil,  errors.New(apperrors.Internal, err, "An internal error occured while searching the tags", "")
+		}
+	} else {
+		allImageTagsDetail = srv.dbRepository.FindAllPortForLanguageAndVersion(languageName, version)
 	}
 
 	return allImageTagsDetail, nil

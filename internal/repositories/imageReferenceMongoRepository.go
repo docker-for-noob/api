@@ -116,6 +116,22 @@ func (repository *imageReferenceRepository)  AddAllTagReferenceFromApi(fn Format
 
 	return nil
 }
+func (repository *imageReferenceRepository)  FindAllPortForLanguageAndVersion(language string, version string) []domain.ImageNameDetail {
+	coll := repository.client.Database("docker-for-noob").Collection("reference")
+
+	filter := bson.D{{"Language", language}, {"Version", version}}
+
+	cursor, err := coll.Find(context.TODO(), filter)
+	if err != nil {
+		panic(err)
+	}
+	var results []domain.ImageNameDetail
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	return results
+}
 
 func mapCsvResultToTagReferenceStruct(csvLine []string, fn Formater) ImageReferenceToAdd {
 
