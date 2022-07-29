@@ -12,7 +12,7 @@ type DockerImages struct {
 }
 
 type DockerImagesParse struct {
-	Results []string
+	Images []string
 }
 
 type DockerImageVersions struct {
