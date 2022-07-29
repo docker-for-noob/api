@@ -16,11 +16,12 @@ type RedisRepository interface {
 	Read(image string, tag string) (domain.DockerImageResult, error)
 	ImageExist(image string, tag string) bool
 	Add(key string, value interface{})
+	FindDockerImageResult(key string) []string
 }
 
 type ImageDockerService interface {
 	Get(image string, tag string) (domain.DockerImageResult, error)
 	GetImages() (domain.DockerImagesParse, error)
 	GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error)
-	GetAllTagsFromImageVersion(image string, version string) (domain.ImageNameDetail, error)
+	GetAllTagsFromImageVersion(image string, version string) ([]domain.ImageNameDetail, error)
 }

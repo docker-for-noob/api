@@ -59,6 +59,11 @@ func (repo *redisRepository) Add(key string, value interface{}) {
 	repo.rdb.RPush(repo.ctx, key, listToString)
 }
 
-
+func (repo *redisRepository) FindDockerImageResult(key string) []string {
+	if repo.rdb.LLen(repo.ctx, key).Val() > 0 {
+		return repo.rdb.LRange(repo.ctx, key, 0, -1).Val()
+	}
+	return []string{}
+}
 
 

@@ -1,7 +1,7 @@
 package imageDockerService
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/internal/core/ports"
 	"github.com/docker-generator/api/internal/core/services/splitImageDockerService"
@@ -66,16 +66,18 @@ func (srv *imageDockerService) GetAllVersionsFromImage(languageName string) (dom
 	return dockerImageVersion, err
 }
 
-func (srv *imageDockerService) GetAllTagsFromImageVersion(languageName string, version string) (domain.ImageNameDetail, error) {
+func (srv *imageDockerService) GetAllTagsFromImageVersion(languageName string, version string) ([]domain.ImageNameDetail, error) {
 
-	allImageForAVersion, err := srv.Get(languageName, version)
+	cacheKey := "tags_" + languageName + ":" + version
+
+	response := srv.redisRepository.FindDockerImageResult(cacheKey)
+
+	var allImageTagsDetail []domain.ImageNameDetail
+
+	err := json.Unmarshal([]byte(response[0]), &allImageTagsDetail)
 	if err != nil {
-		return domain.ImageNameDetail{}, errors.New(apperrors.Internal, err, "An internal error occured while searching the tags", "")
+		return nil,  errors.New(apperrors.Internal, err, "An internal error occured while searching the tags", "")
 	}
 
-	fmt.Println(allImageForAVersion)
-
-	resp, err := srv.dockerHubRepository.GetAllTagsFromImageVersion(languageName, version)
-
-	return resp, err
+	return allImageTagsDetail, nil
 }

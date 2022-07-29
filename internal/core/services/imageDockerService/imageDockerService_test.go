@@ -170,3 +170,63 @@ func TestGetAllVersionsFromImage(t *testing.T) {
 		assert.Equal(t, tt.want.result, result)
 	}
 }
+
+func TestGetAllTagsFromImageVersion(t *testing.T) {
+
+	//Mocks//
+	//sampleWantedDockerImage := domain.DockerImageResult{Name: "mysql", Tags: []string{"latest", "8.0.30-oracle", "8.0-oracle"}}
+	//sampleWantedDockerImageWithDoublonVersion := domain.DockerImageResult{Name: "mysql", Tags: []string{"latest", "8.0.30-oracle", "8.0-oracle", "8.0-debian"}}
+
+
+	//Tests//
+
+	type args struct {
+		languageName string
+		version string
+	}
+
+	type want struct {
+		result []domain.ImageNameDetail
+		err error
+	}
+
+	tests := []struct {
+		name  string
+		args  args
+		want  want
+		mocks func(m mockers)
+	}{
+		{
+			name: "Should return all Tags from cache",
+			args: args{languageName: "mysql", version: "5.7.32"},
+			want: want{result: []domain.ImageNameDetail{{Name: "mysql:5.7.32", Language: "mysql", Version: "5.7.32", Tags: []string{} }}},
+			mocks: func(m mockers) {
+				m.redisRepository.EXPECT().FindOne("tags_mysql:5.7.32").Return(`[{"Name": "mysql:5.7.32", "Language": "mysql", "Version": "5.7.32", "Tags": []}]`)
+			},
+		},
+	}
+
+	// Test Runner //
+
+	for _, tt := range tests {
+		tt := tt
+
+		m := mockers{
+			dockerHubRepository: mock_ports.NewMockDockerHubRepository(gomock.NewController(t)),
+			redisRepository:     mock_ports.NewMockRedisRepository(gomock.NewController(t)),
+		}
+
+		tt.mocks(m)
+		service := imageDockerService.New(m.dockerHubRepository, m.redisRepository)
+
+		result, err := service.GetAllTagsFromImageVersion(tt.args.languageName, tt.args.version)
+
+		// Verify
+		if tt.want.err != nil {
+			assert.Equal(t, errors.Code(tt.want.err), errors.Code(err))
+			assert.Equal(t, tt.want.err.Error(), err.Error())
+		}
+
+		assert.Equal(t, tt.want.result, result)
+	}
+}
