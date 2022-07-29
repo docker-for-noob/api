@@ -61,6 +61,31 @@ func GetDockerHubOfficialImageResult(page int) (domain.DockerImages, error) {
 	return dockerImages, err
 }
 
+func (repo *dockerHubRepository) GetImages() (domain.DockerImagesParse, error) {
+	var dockerImagesResults []string
+	var page = 1
+
+	for true {
+		resp, _ := GetDockerHubOfficialImageResult(page)
+
+		for _, data := range resp.Results {
+			dockerImagesResults = append(dockerImagesResults, data.Name)
+		}
+
+		if resp.Next == "" {
+			break
+		}
+
+		page += 1
+	}
+
+	dockerImagesParse := domain.DockerImagesParse{
+		Results: dockerImagesResults,
+	}
+
+	return dockerImagesParse, nil
+}
+
 func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerImageResult, error) {
 	var dockerHubResult []string
 	var dockerHubTags []string
@@ -111,30 +136,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 		Tags: dockerHubTags,
 	}
 	return DockerImageResult, nil
-}
-
-func (repo *dockerHubRepository) GetImages() (domain.DockerImages, error) {
-	var page = 1
-	resp, _ := GetDockerHubOfficialImageResult(page)
-
-	//for true {
-	//	resp, err := GetDockerHubOfficialImageResult(page)
-	//
-	//	if err != nil {
-	//		DockerImages := domain.DockerImages{}
-	//		return DockerImages, nil
-	//	}
-	//
-	//	dockerHubResult = append(dockerHubResult, resp.Results...)
-	//
-	//	if resp.Next == "" {
-	//		break
-	//	}
-	//
-	//	page += 1
-	//}
-
-	return resp, nil
 }
 
 func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {

@@ -5,9 +5,14 @@ type DockerHub struct {
 }
 
 type DockerImages struct {
+	Next    string `njson:"next"`
 	Results []struct {
 		Name string `json:"name"`
 	} `json:"results"`
+}
+
+type DockerImagesParse struct {
+	Results []string
 }
 
 type DockerImageVersions struct {
