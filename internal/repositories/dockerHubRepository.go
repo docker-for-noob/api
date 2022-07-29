@@ -80,7 +80,7 @@ func (repo *dockerHubRepository) GetImages() (domain.DockerImagesParse, error) {
 	}
 
 	dockerImagesParse := domain.DockerImagesParse{
-		Results: dockerImagesResults,
+		Images: dockerImagesResults,
 	}
 
 	return dockerImagesParse, nil
@@ -136,48 +136,6 @@ func (repo *dockerHubRepository) Read(image string, tag string) (domain.DockerIm
 		Tags: dockerHubTags,
 	}
 	return DockerImageResult, nil
-}
-
-func (repo *dockerHubRepository) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
-	DockerImageVersions := domain.DockerImageVersions{
-		Details: []domain.DockerImageDetails{
-			{
-				Name:     "php8.0-rc-buster",
-				Version:  "8.0",
-				Language: "php",
-				Tags: []string{
-					"rc-buster",
-					"rc-apache-buster",
-					"rc",
-				},
-			},
-			{
-				Name:     "php7.0-rc-apache",
-				Version:  "7.0",
-				Language: "php",
-				Tags: []string{
-					"rc-buster",
-					"rc-apache-buster",
-					"rc",
-				},
-			},
-		},
-	}
-	return DockerImageVersions, nil
-}
-
-func (repo *dockerHubRepository) GetAllTagsFromImageVersion(image string, version string) (domain.DockerImageDetails, error) {
-	DockerImageDetails := domain.DockerImageDetails{
-		Name:     "php8.0-rc-buster",
-		Version:  "8.0",
-		Language: "8.0",
-		Tags: []string{
-			"rc-buster",
-			"rc-apache-buster",
-			"rc",
-		},
-	}
-	return DockerImageDetails, nil
 }
 
 func (repo *dockerHubRepository) GetTagReference(image string, tag string) (domain.ImageReference, error) {

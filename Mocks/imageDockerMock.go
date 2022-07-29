@@ -35,10 +35,10 @@ func (m *MockDockerHubRepository) EXPECT() *MockDockerHubRepositoryMockRecorder 
 }
 
 // GetAllTagsFromImageVersion mocks base method.
-func (m *MockDockerHubRepository) GetAllTagsFromImageVersion(image, version string) (domain.DockerImageDetails, error) {
+func (m *MockDockerHubRepository) GetAllTagsFromImageVersion(image, version string) (domain.ImageNameDetail, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllTagsFromImageVersion", image, version)
-	ret0, _ := ret[0].(domain.DockerImageDetails)
+	ret0, _ := ret[0].(domain.ImageNameDetail)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,18 +50,18 @@ func (mr *MockDockerHubRepositoryMockRecorder) GetAllTagsFromImageVersion(image,
 }
 
 // GetAllVersionsFromImage mocks base method.
-func (m *MockDockerHubRepository) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
+func (m *MockDockerHubRepository) GetAllVersionsFromImage(languageName string) (domain.DockerImageVersions, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllVersionsFromImage", image)
+	ret := m.ctrl.Call(m, "GetAllVersionsFromImage", languageName)
 	ret0, _ := ret[0].(domain.DockerImageVersions)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllVersionsFromImage indicates an expected call of GetAllVersionsFromImage.
-func (mr *MockDockerHubRepositoryMockRecorder) GetAllVersionsFromImage(image interface{}) *gomock.Call {
+func (mr *MockDockerHubRepositoryMockRecorder) GetAllVersionsFromImage(languageName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllVersionsFromImage", reflect.TypeOf((*MockDockerHubRepository)(nil).GetAllVersionsFromImage), image)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllVersionsFromImage", reflect.TypeOf((*MockDockerHubRepository)(nil).GetAllVersionsFromImage), languageName)
 }
 
 // GetImages mocks base method.
@@ -146,6 +146,18 @@ func (m *MockRedisRepository) EXPECT() *MockRedisRepositoryMockRecorder {
 	return m.recorder
 }
 
+// Add mocks base method.
+func (m *MockRedisRepository) Add(key string, value interface{}) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Add", key, value)
+}
+
+// Add indicates an expected call of Add.
+func (mr *MockRedisRepositoryMockRecorder) Add(key, value interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockRedisRepository)(nil).Add), key, value)
+}
+
 // ImageExist mocks base method.
 func (m *MockRedisRepository) ImageExist(image, tag string) bool {
 	m.ctrl.T.Helper()
@@ -214,10 +226,10 @@ func (mr *MockImageDockerServiceMockRecorder) Get(image, tag interface{}) *gomoc
 }
 
 // GetAllTagsFromImageVersion mocks base method.
-func (m *MockImageDockerService) GetAllTagsFromImageVersion(image, version string) (domain.DockerImageDetails, error) {
+func (m *MockImageDockerService) GetAllTagsFromImageVersion(image, version string) (domain.ImageNameDetail, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllTagsFromImageVersion", image, version)
-	ret0, _ := ret[0].(domain.DockerImageDetails)
+	ret0, _ := ret[0].(domain.ImageNameDetail)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
