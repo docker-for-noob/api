@@ -4,4 +4,4 @@ resources:
   - deployment.yaml
   - service.yaml
   - mongo-pvc.yaml
-  - mongo-secret.yaml
+  - mongo-secrets.yaml
