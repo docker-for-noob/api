@@ -5,3 +5,4 @@ resources:
   - service.yaml
   - mongo-pvc.yaml
   - mongo-secrets.yaml
+namespace: docker-for-noob
