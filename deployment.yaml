@@ -47,8 +47,8 @@ spec:
             successThreshold: 1
             failureThreshold: 6
           env:
-            - name: MONGO_INITDB_DATABASE
-              value: "docker-for-noob"
+            #- name: MONGO_INITDB_DATABASE
+            #  value: "docker-for-noob"
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
