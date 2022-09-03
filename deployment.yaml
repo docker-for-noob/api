@@ -31,10 +31,7 @@ spec:
           livenessProbe:
             exec:
               command:
-                - mongo
-                - --disableImplicitSessions
-                - --eval
-                - "db.adminCommand('ping')"
+                - mongod
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
