@@ -28,24 +28,24 @@ spec:
         - image: mongo
           name: mongo
           args: [ "--dbpath","/data/db" ]
-          livenessProbe:
-            exec:
-              command:
-                - mongod
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - mongod
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
+          #livenessProbe:
+          #  exec:
+          #    command:
+          ##      - mongod
+          #  initialDelaySeconds: 30
+          #  periodSeconds: 10
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 6
+          #readinessProbe:
+          #  exec:
+          #    command:
+          #      - mongod
+          #  initialDelaySeconds: 30
+          ##  periodSeconds: 10
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 6
           env:
             #- name: MONGO_INITDB_DATABASE
             #  value: "docker-for-noob"
