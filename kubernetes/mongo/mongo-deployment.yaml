@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: mongo-deployment
-  name: mongo-deployment
+    app: mongo
+  name: mongo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo-deployment
+      app: mongo
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: mongo-deployment
+        app: mongo
     spec:
       containers:
       - image: mongo
@@ -62,4 +62,4 @@ spec:
       volumes:
       - name: "mongo-data-dir"
         persistentVolumeClaim:
-          claimName: "mongo-pvc"
+          claimName: "pvc"
