@@ -27,8 +27,10 @@ spec:
               - mongo
               - --disableImplicitSessions
               - --eval
+              - -u $MONGO_INITDB_ROOT_USERNAME
+              - -p $MONGO_INITDB_ROOT_PASSWORD
               - "db.adminCommand('ping')"
-          initialDelaySeconds: 30
+          initialDelaySeconds: 3600
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 1
@@ -39,8 +41,10 @@ spec:
               - mongo
               - --disableImplicitSessions
               - --eval
+              - -u $MONGO_INITDB_ROOT_USERNAME
+              - -p $MONGO_INITDB_ROOT_PASSWORD
               - "db.adminCommand('ping')"
-          initialDelaySeconds: 30
+          initialDelaySeconds: 3600
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 1
