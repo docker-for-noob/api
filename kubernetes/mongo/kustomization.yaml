@@ -5,6 +5,7 @@ commonLabels:
   app: docker-for-noob-mongo
 namespace: mongo
 resources:
+  - mongo-namespace.yaml
   - mongo-pvc.yaml
   - mongo-secrets.yaml
   - mongo-service.yaml
