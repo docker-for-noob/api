@@ -3,7 +3,7 @@ kind: Kustomization
 
 commonLabels:
   app: docker-for-noob-mongo
-namepace: mongo
+namespace: mongo
 resources:
   - mongo-pvc.yaml
   - mongo-secrets.yaml
