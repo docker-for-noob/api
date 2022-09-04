@@ -24,9 +24,7 @@ spec:
         livenessProbe:
           exec:
             command:
-              - mongo
-              - --disableImplicitSessions
-              - --eval
+              - mongosh
               - -u $MONGO_INITDB_ROOT_USERNAME
               - -p $MONGO_INITDB_ROOT_PASSWORD
               - "db.adminCommand('ping')"
@@ -38,9 +36,7 @@ spec:
         readinessProbe:
           exec:
             command:
-              - mongo
-              - --disableImplicitSessions
-              - --eval
+              - mongosh
               - -u $MONGO_INITDB_ROOT_USERNAME
               - -p $MONGO_INITDB_ROOT_PASSWORD
               - "db.adminCommand('ping')"
