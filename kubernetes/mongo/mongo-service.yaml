@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  ports:
+    - port: 27007
+      targetPort: 27007
+  selector:
+    app: mongo-deployment
