@@ -8,7 +8,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: cluster-1
-  GKE_ZONE: europe-west1
+  GKE_ZONE: europe-west1-c
   DEPLOYMENT_NAME: mongo-deployment
   IMAGE: api
 
