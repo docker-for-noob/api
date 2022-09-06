@@ -174,6 +174,7 @@ func TestAddAllTagReference(t *testing.T) {
 		Tags: []string {"dernier", "avantDernier"},
 
 	}
+
 	//Tests//
 
 	type args struct {
@@ -205,7 +206,7 @@ func TestAddAllTagReference(t *testing.T) {
 			mocks: func(m mockers) {
 				m.imageDockerServiceMock.EXPECT().Get("go", "").Return(imageDockerServiceMockResult, nil)
 				m.dockerHubRepositoryMock.EXPECT().HandleMultipleGetTagReference("go",imageDockerServiceMockResult.Tags).Return(nil)
-				m.imageReferenceRepository.EXPECT().AddAllTagReferenceFromApi().Return(errors.New(apperrors.Internal, nil, "", ""))
+				m.imageReferenceRepository.EXPECT().AddAllTagReferenceFromApi(gomock.Any()).Return(errors.New(apperrors.Internal, nil, "", ""))
 			},
 		},
 	}

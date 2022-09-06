@@ -24,7 +24,9 @@ func main() {
 
 	redisRepositoryInstantiated := repositories.NewRedisRepository()
 
-	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated)
+	mongoRepositoryInstanciated := repositories.NewImageReferenceRepository()
+
+	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated, mongoRepositoryInstanciated)
 
 	imageDockerHandler := imageDockerHandlers.NewHTTPHandler(imageDockerServiceInstantiated)
 

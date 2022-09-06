@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/docker-generator/api/internal/core/domain"
 	"github.com/docker-generator/api/pkg/goDotEnv"
 	"github.com/go-redis/redis/v8"
@@ -48,3 +49,21 @@ func (repo *redisRepository) ImageExist(image string, tag string) bool {
 
 	return length > 0
 }
+
+func (repo *redisRepository) Add(key string, value interface{}) {
+	listToString, _ := json.Marshal(value)
+	if repo.rdb.LLen(repo.ctx, key).Val() > 0 {
+		repo.rdb.Del(repo.ctx, key)
+	}
+	
+	repo.rdb.RPush(repo.ctx, key, listToString)
+}
+
+func (repo *redisRepository) FindDockerImageResult(key string) []string {
+	if repo.rdb.LLen(repo.ctx, key).Val() > 0 {
+		return repo.rdb.LRange(repo.ctx, key, 0, -1).Val()
+	}
+	return []string{}
+}
+
+

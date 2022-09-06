@@ -1,11 +1,15 @@
 package ports
 
-import "github.com/docker-generator/api/internal/core/domain"
+import (
+	"github.com/docker-generator/api/internal/core/domain"
+	"github.com/docker-generator/api/internal/repositories"
+)
 
 type ImageReferenceRepository interface {
 	Read(imageName string) (domain.ImageReference, error)
 	Add(imageReference domain.ImageReference) error
-	AddAllTagReferenceFromApi() error
+	AddAllTagReferenceFromApi(fn repositories.Formater) error
+	FindAllPortForLanguageAndVersion(language string, version string) []domain.ImageNameDetail
 }
 
 type ImageReferenceService interface {
