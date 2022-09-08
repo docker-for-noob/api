@@ -20,7 +20,7 @@ spec:
       securityContext:
         runAsUser: 0
       containers:
-        - command:
+      - command:
           - sh
           - -c
           - while true ; do echo alive ; sleep 10 ; done
