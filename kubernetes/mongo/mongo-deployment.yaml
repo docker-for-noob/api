@@ -22,24 +22,24 @@ spec:
         name: mongo
         command: ["/bin/sh"]
         args: ["-c", "mongod --replSet=rs0 --bind_ip_all"]
-        livenessProbe:
-          exec:
-            command:
-              - mongod
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 6
-        readinessProbe:
-          exec:
-            command:
-              - mongod
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 6
+        #livenessProbe:
+        #  exec:
+        #    command:
+        #      - mongod
+        #  initialDelaySeconds: 30
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 6
+        #readinessProbe:
+        #  exec:
+        #    command:
+        #      - mongod
+        #  initialDelaySeconds: 30
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 6
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
