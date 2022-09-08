@@ -41,16 +41,28 @@ spec:
         #  successThreshold: 1
         #  failureThreshold: 6
         env:
-        - name: MONGO_INITDB_DATABASE
-          value: testcamille
         - name: MONGO_INITDB_ROOT_USERNAME
-          value: adminuser
+          valueFrom:
+            secretKeyRef:
+              name: mongo-creds
+              key: username
         - name: MONGO_INITDB_ROOT_PASSWORD
-          value: root
+          valueFrom:
+            secretKeyRef:
+              name: mongo-creds
+              key: password
         volumeMounts:
         - name: "mongo-data-dir"
           mountPath: "/data/db"
+        - name: mongodb-scripts
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: "mongo-data-dir"
         persistentVolumeClaim:
           claimName: "pvc"
+      - name: mongodb-scripts
+        configMap:
+          name: mongodb-configmap
+          items:
+          - key: ensure-users.js
+            path: ensure-users.js

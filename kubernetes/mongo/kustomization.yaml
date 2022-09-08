@@ -8,3 +8,4 @@ resources:
   - mongo-secrets.yaml
   - mongo-service.yaml
   - mongo-deployment.yaml
+  - mongo-configmap.yaml
