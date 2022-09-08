@@ -21,7 +21,7 @@ spec:
       - image: mongo
         name: mongo
         command: ["/bin/sh"]
-        args: ["-c", "mongod --bind_ip_all"]
+        args: ["-c", "mongod --bind_ip_all --auth"]
         #livenessProbe:
         #  exec:
         #    command:
