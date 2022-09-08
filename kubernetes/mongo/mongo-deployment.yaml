@@ -41,6 +41,8 @@ spec:
         #  successThreshold: 1
         #  failureThreshold: 6
         env:
+        - name: MONGO_INITDB_DATABASE
+          value: testcamille
         - name: MONGO_INITDB_ROOT_USERNAME
           value: adminuser
         - name: MONGO_INITDB_ROOT_PASSWORD
