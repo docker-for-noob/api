@@ -17,8 +17,6 @@ spec:
       labels:
         app: mongo
     spec:
-      securityContext:
-        runAsUser: 0
       containers:
       - command:
           - sh
