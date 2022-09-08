@@ -1,11 +1,11 @@
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: mongo-data
+  name: pvc
 spec:
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/mongo
+  resources:
+    requests:
+      storage: 1Gi
