@@ -17,8 +17,14 @@ spec:
       labels:
         app: mongo
     spec:
+      securityContext:
+        runAsUser: 0
       containers:
-      - image: mongo
+        - command:
+          - sh
+          - -c
+          - while true ; do echo alive ; sleep 10 ; done
+        image: mongo
         name: mongo
         args: ["--dbpath","/data/db"]
         livenessProbe:
