@@ -20,13 +20,12 @@ spec:
       containers:
       - image: mongo
         name: mongo
-        args: ["--dbpath","/data/db"]
+        command: ["/bin/sh"]
+        args: ["-c", "mongod --replSet=rs0 --bind_ip_all"]
         livenessProbe:
           exec:
             command:
-              - mongosh
-              - --eval
-              - "db.adminCommand('ping')"
+              - mongod
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
@@ -35,9 +34,7 @@ spec:
         readinessProbe:
           exec:
             command:
-              - mongosh
-              - --eval
-              - "db.adminCommand('ping')"
+              - mongod
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
