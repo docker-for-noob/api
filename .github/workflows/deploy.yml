@@ -58,7 +58,7 @@ jobs:
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-          cd kubernetes/api && ../../kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA -f
+          cd kubernetes/api && ../../kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
           ./kustomize build ./kubernetes/api | kubectl apply -f -
           ./kustomize build ./kubernetes/mongo | kubectl apply -f -
           kubectl rollout status deployment/$DEPLOYMENT_NAME
