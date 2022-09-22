@@ -8,9 +8,9 @@ data:
       dbPath: /data/db
   ensure-users.js: |
     const targetDbStr = 'test';
-    const rootUser = 'useradmin';
+    const rootUser = 'adminuser';
     const rootPass = 'password123';
-    const usersStr = 'useradmin-dbAdmin,readWrite-password123';
+    const usersStr = 'adminuser-dbAdmin,readWrite-password123';
 
     const adminDb = db.getSiblingDB('admin');
     adminDb.auth(rootUser, rootPass);
