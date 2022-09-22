@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-deployment
+  template:
+    metadata:
+      labels:
+        app: api-deployment
+    spec:
+      containers:
+        - name: api-deployment
+          image: gcr.io/PROJECT_ID/IMAGE:TAG
+          ports:
+            - containerPort: 80
