@@ -18,7 +18,7 @@ spec:
         app: mongo
     spec:
       containers:
-      - image: mongo
+      - image: mongo:5.0.12
         name: mongo
         #command: ["/bin/sh"]
         #args: ["-c", "mongod --bind_ip_all --auth"]
