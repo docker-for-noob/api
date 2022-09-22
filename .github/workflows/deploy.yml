@@ -59,6 +59,7 @@ jobs:
       - name: Deploy
         run: |-
           ./kustomize build ./kubernetes/mongo | kubectl apply -f -
+          ./kustomize build ./kubernetes/api | kubectl apply -f -
           kubectl rollout status deployment/$DEPLOYMENT_NAME
           kubectl get services -o wide
 
