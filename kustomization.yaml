@@ -1,7 +1,0 @@
-commonLabels:
-  app: docker-for-noob
-resources:
-  - deployment.yaml
-  - service.yaml
-  - mongo-pvc.yaml
-  - mongo-secrets.yaml
