@@ -34,6 +34,50 @@ func (m *MockDockerHubRepository) EXPECT() *MockDockerHubRepositoryMockRecorder 
 	return m.recorder
 }
 
+// GetImages mocks base method.
+func (m *MockDockerHubRepository) GetImages() (domain.DockerImagesParse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetImages")
+	ret0, _ := ret[0].(domain.DockerImagesParse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetImages indicates an expected call of GetImages.
+func (mr *MockDockerHubRepositoryMockRecorder) GetImages() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetImages", reflect.TypeOf((*MockDockerHubRepository)(nil).GetImages))
+}
+
+// GetTagReference mocks base method.
+func (m *MockDockerHubRepository) GetTagReference(image, tag string) (domain.ImageReference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTagReference", image, tag)
+	ret0, _ := ret[0].(domain.ImageReference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTagReference indicates an expected call of GetTagReference.
+func (mr *MockDockerHubRepositoryMockRecorder) GetTagReference(image, tag interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTagReference", reflect.TypeOf((*MockDockerHubRepository)(nil).GetTagReference), image, tag)
+}
+
+// HandleMultipleGetTagReference mocks base method.
+func (m *MockDockerHubRepository) HandleMultipleGetTagReference(languageName string, allTags []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HandleMultipleGetTagReference", languageName, allTags)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// HandleMultipleGetTagReference indicates an expected call of HandleMultipleGetTagReference.
+func (mr *MockDockerHubRepositoryMockRecorder) HandleMultipleGetTagReference(languageName, allTags interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleMultipleGetTagReference", reflect.TypeOf((*MockDockerHubRepository)(nil).HandleMultipleGetTagReference), languageName, allTags)
+}
+
 // Read mocks base method.
 func (m *MockDockerHubRepository) Read(image, tag string) (domain.DockerImageResult, error) {
 	m.ctrl.T.Helper()
@@ -70,6 +114,32 @@ func NewMockRedisRepository(ctrl *gomock.Controller) *MockRedisRepository {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockRedisRepository) EXPECT() *MockRedisRepositoryMockRecorder {
 	return m.recorder
+}
+
+// Add mocks base method.
+func (m *MockRedisRepository) Add(key string, value interface{}) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Add", key, value)
+}
+
+// Add indicates an expected call of Add.
+func (mr *MockRedisRepositoryMockRecorder) Add(key, value interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockRedisRepository)(nil).Add), key, value)
+}
+
+// FindDockerImageResult mocks base method.
+func (m *MockRedisRepository) FindDockerImageResult(key string) []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindDockerImageResult", key)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// FindDockerImageResult indicates an expected call of FindDockerImageResult.
+func (mr *MockRedisRepositoryMockRecorder) FindDockerImageResult(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindDockerImageResult", reflect.TypeOf((*MockRedisRepository)(nil).FindDockerImageResult), key)
 }
 
 // ImageExist mocks base method.
@@ -137,4 +207,49 @@ func (m *MockImageDockerService) Get(image, tag string) (domain.DockerImageResul
 func (mr *MockImageDockerServiceMockRecorder) Get(image, tag interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockImageDockerService)(nil).Get), image, tag)
+}
+
+// GetAllTagsFromImageVersion mocks base method.
+func (m *MockImageDockerService) GetAllTagsFromImageVersion(image, version string) ([]domain.ImageNameDetail, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllTagsFromImageVersion", image, version)
+	ret0, _ := ret[0].([]domain.ImageNameDetail)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllTagsFromImageVersion indicates an expected call of GetAllTagsFromImageVersion.
+func (mr *MockImageDockerServiceMockRecorder) GetAllTagsFromImageVersion(image, version interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTagsFromImageVersion", reflect.TypeOf((*MockImageDockerService)(nil).GetAllTagsFromImageVersion), image, version)
+}
+
+// GetAllVersionsFromImage mocks base method.
+func (m *MockImageDockerService) GetAllVersionsFromImage(image string) (domain.DockerImageVersions, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllVersionsFromImage", image)
+	ret0, _ := ret[0].(domain.DockerImageVersions)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllVersionsFromImage indicates an expected call of GetAllVersionsFromImage.
+func (mr *MockImageDockerServiceMockRecorder) GetAllVersionsFromImage(image interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllVersionsFromImage", reflect.TypeOf((*MockImageDockerService)(nil).GetAllVersionsFromImage), image)
+}
+
+// GetImages mocks base method.
+func (m *MockImageDockerService) GetImages() (domain.DockerImagesParse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetImages")
+	ret0, _ := ret[0].(domain.DockerImagesParse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetImages indicates an expected call of GetImages.
+func (mr *MockImageDockerServiceMockRecorder) GetImages() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetImages", reflect.TypeOf((*MockImageDockerService)(nil).GetImages))
 }

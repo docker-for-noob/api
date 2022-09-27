@@ -24,13 +24,15 @@ func main() {
 
 	redisRepositoryInstantiated := repositories.NewRedisRepository()
 
-	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated)
+	mongoRepositoryInstanciated := repositories.NewImageReferenceRepository()
+
+	imageDockerServiceInstantiated := imageDockerService.New(dockerHubRepositoryInstantiated, redisRepositoryInstantiated, mongoRepositoryInstanciated)
 
 	imageDockerHandler := imageDockerHandlers.NewHTTPHandler(imageDockerServiceInstantiated)
 
 	imageReferenceRepositoryInstantiated := repositories.NewImageReferenceRepository()
 
-	imageReferenceServiceInstantiated := imageReferenceService.New(imageReferenceRepositoryInstantiated)
+	imageReferenceServiceInstantiated := imageReferenceService.New(imageReferenceRepositoryInstantiated, dockerHubRepositoryInstantiated, imageDockerServiceInstantiated)
 
 	referenceHandler := imageReferenceHandler.NewImageReferenceHandler(imageReferenceServiceInstantiated)
 
@@ -43,10 +45,9 @@ func main() {
 	}))
 
 	router.Group(func(publicRouter chi.Router) {
-		publicRouter.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-			fmt.Println("toto")
-		})
-		publicRouter.Get("/dockerHub/images/{image}/*", imageDockerHandler.Get)
+		publicRouter.Get("/dockerImage/images", imageDockerHandler.GetImages)
+		publicRouter.Get("/dockerImage/versions/{image}", imageDockerHandler.GetAllVersionsFromImage)
+		publicRouter.Get("/dockerImage/tags/{image}/{version}", imageDockerHandler.GetAllTagsFromImageVersion)
 		publicRouter.Get("/swagger/*", httpSwagger.Handler(
 			httpSwagger.URL(":80/swagger/doc.json"), //The url pointing to API definition
 		))

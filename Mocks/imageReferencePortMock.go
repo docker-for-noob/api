@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	domain "github.com/docker-generator/api/internal/core/domain"
+	repositories "github.com/docker-generator/api/internal/repositories"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -32,6 +33,48 @@ func NewMockImageReferenceRepository(ctrl *gomock.Controller) *MockImageReferenc
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockImageReferenceRepository) EXPECT() *MockImageReferenceRepositoryMockRecorder {
 	return m.recorder
+}
+
+// Add mocks base method.
+func (m *MockImageReferenceRepository) Add(imageReference domain.ImageReference) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Add", imageReference)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Add indicates an expected call of Add.
+func (mr *MockImageReferenceRepositoryMockRecorder) Add(imageReference interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockImageReferenceRepository)(nil).Add), imageReference)
+}
+
+// AddAllTagReferenceFromApi mocks base method.
+func (m *MockImageReferenceRepository) AddAllTagReferenceFromApi(fn repositories.Formater) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddAllTagReferenceFromApi", fn)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddAllTagReferenceFromApi indicates an expected call of AddAllTagReferenceFromApi.
+func (mr *MockImageReferenceRepositoryMockRecorder) AddAllTagReferenceFromApi(fn interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAllTagReferenceFromApi", reflect.TypeOf((*MockImageReferenceRepository)(nil).AddAllTagReferenceFromApi), fn)
+}
+
+// FindAllPortForLanguageAndVersion mocks base method.
+func (m *MockImageReferenceRepository) FindAllPortForLanguageAndVersion(language, version string) []domain.ImageNameDetail {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAllPortForLanguageAndVersion", language, version)
+	ret0, _ := ret[0].([]domain.ImageNameDetail)
+	return ret0
+}
+
+// FindAllPortForLanguageAndVersion indicates an expected call of FindAllPortForLanguageAndVersion.
+func (mr *MockImageReferenceRepositoryMockRecorder) FindAllPortForLanguageAndVersion(language, version interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllPortForLanguageAndVersion", reflect.TypeOf((*MockImageReferenceRepository)(nil).FindAllPortForLanguageAndVersion), language, version)
 }
 
 // Read mocks base method.
@@ -70,6 +113,34 @@ func NewMockImageReferenceService(ctrl *gomock.Controller) *MockImageReferenceSe
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockImageReferenceService) EXPECT() *MockImageReferenceServiceMockRecorder {
 	return m.recorder
+}
+
+// AddAllTagReference mocks base method.
+func (m *MockImageReferenceService) AddAllTagReference(allLanguage []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddAllTagReference", allLanguage)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddAllTagReference indicates an expected call of AddAllTagReference.
+func (mr *MockImageReferenceServiceMockRecorder) AddAllTagReference(allLanguage interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAllTagReference", reflect.TypeOf((*MockImageReferenceService)(nil).AddAllTagReference), allLanguage)
+}
+
+// FindAllTagReferenceForALanguage mocks base method.
+func (m *MockImageReferenceService) FindAllTagReferenceForALanguage(languageName string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAllTagReferenceForALanguage", languageName)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// FindAllTagReferenceForALanguage indicates an expected call of FindAllTagReferenceForALanguage.
+func (mr *MockImageReferenceServiceMockRecorder) FindAllTagReferenceForALanguage(languageName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllTagReferenceForALanguage", reflect.TypeOf((*MockImageReferenceService)(nil).FindAllTagReferenceForALanguage), languageName)
 }
 
 // Get mocks base method.
