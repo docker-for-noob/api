@@ -7,7 +7,8 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  ENV: ${{ secrets.ENVIRONMENT_PRODUCTION }}
+  MONGODB_REPLACEMENT: ${{ secrets.MONGODB }}
+  REDIS_REPLACEMENT: ${{ secrets.REDIS }}
   GKE_CLUSTER: autopilot-cluster-2
   GKE_ZONE: europe-west1
   DEPLOYMENT_NAME: mongo
@@ -44,8 +45,8 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |-
-          echo $ENV
-          echo $ENV >> .env
+          sed -i "s/mongodbreplace/$MONGODB_REPLACEMENT/g" .env.dist
+          sed -i "s/redisreplace/$REDIS_REPLACEMENT/g" .env.dist
           docker build -f DockerfileProd --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" --build-arg GITHUB_SHA="$GITHUB_SHA" --build-arg GITHUB_REF="$GITHUB_REF" .
 
       # Push the Docker image to Google Container Registry
