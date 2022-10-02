@@ -12,7 +12,7 @@ COPY go.mod .
 # Copy over the source files
 COPY . .
 
-RUN mv /go/src/api/.env.dist /go/src/api/.env
+#RUN mv /go/src/api/.env.dist /go/src/api/.env
 
 RUN go mod vendor
 
