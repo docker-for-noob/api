@@ -7,6 +7,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  ENV: ${{ secrets.ENVIRONMENT_PRODUCTION }}
   GKE_CLUSTER: autopilot-cluster-2
   GKE_ZONE: europe-west1
   DEPLOYMENT_NAME: mongo
@@ -43,7 +44,8 @@ jobs:
       # Build the Docker image
       - name: Build
         run: |-
-          echo ${{ secrets.ENVIRONMENT_PRODUCTION }} >> .env
+          echo $ENV
+          echo $ENV >> .env
           docker build -f DockerfileProd --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" --build-arg GITHUB_SHA="$GITHUB_SHA" --build-arg GITHUB_REF="$GITHUB_REF" .
 
       # Push the Docker image to Google Container Registry
