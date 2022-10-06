@@ -20,8 +20,8 @@ spec:
       containers:
       - image: mongo:5.0.12
         name: mongo
-        #command: ["/bin/sh"]
-        #args: ["-c", "mongod --bind_ip_all --auth"]
+        ports:
+            - containerPort: 27017
         livenessProbe:
           exec:
             command:
