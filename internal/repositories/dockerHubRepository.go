@@ -249,6 +249,8 @@ func tagReferenceToSlice(reference domain.ImageReference) []string {
 	}
 
 	for _, element := range reference.Workdir {
+		element = strings.ReplaceAll(element, "[", "")
+		element = strings.ReplaceAll(element, "]", "")
 		if len(workDirToSting) == 0 {
 			workDirToSting = element
 		} else {
